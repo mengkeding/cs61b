@@ -62,9 +62,8 @@ public class LinkedListDeque<Item>{
 
   //Prints the items in the Deque from first to last, separated by a space.
   public void printDeque(){
-    Node p = this.sentinel;
+    Node p = this.sentinel.next;
     while(true){
-        System.out.print(p + " ");
         System.out.print(p.item + " ");
         if(p == sentinel.prev) {
             break;
