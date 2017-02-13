@@ -10,22 +10,22 @@ public class IntList {
     /**
      * First element of list.
      */
-    public int head;
+    public int first;
     /**
      * Remaining elements of list.
      */
-    public IntList tail;
+    public IntList rest;
 
     /**
-     * A List with head HEAD0 and tail TAIL0.
+     * A List with first FIRST0 and rest REST0.
      */
-    public IntList(int head0, IntList tail0) {
-        head = head0;
-        tail = tail0;
+    public IntList(int first0, IntList rest0) {
+        first = first0;
+        rest = rest0;
     }
 
     /**
-     * A List with null tail, and head = 0.
+     * A List with null rest, and first = 0.
      */
     public IntList() {
     /* NOTE: public IntList () { }  would also work. */
@@ -38,8 +38,8 @@ public class IntList {
     public static void dSquareList(IntList L) {
 
         while (L != null) {
-            L.head = L.head * L.head;
-            L = L.tail;
+            L.first = L.first * L.first;
+            L = L.rest;
         }
     }
 
@@ -50,13 +50,13 @@ public class IntList {
         if (L == null) {
             return null;
         }
-        IntList res = new IntList(L.head * L.head, null);
+        IntList res = new IntList(L.first * L.first, null);
         IntList ptr = res;
-        L = L.tail;
+        L = L.rest;
         while (L != null) {
-            ptr.tail = new IntList(L.head * L.head, null);
-            L = L.tail;
-            ptr = ptr.tail;
+            ptr.rest = new IntList(L.first * L.first, null);
+            L = L.rest;
+            ptr = ptr.rest;
         }
         return res;
     }
@@ -68,7 +68,7 @@ public class IntList {
         if (L == null) {
             return null;
         }
-        return new IntList(L.head * L.head, squareListRecursive(L.tail));
+        return new IntList(L.first * L.first, squareListRecursive(L.rest));
     }
 
     /** DO NOT MODIFY ANYTHING ABOVE THIS LINE! */
@@ -103,7 +103,7 @@ public class IntList {
 
     @Override
     public int hashCode() {
-        return head;
+        return first;
     }
 
     /**
@@ -120,8 +120,8 @@ public class IntList {
         }
 
         int k;
-        for (k = 1, p = result; k < args.length; k += 1, p = p.tail) {
-            p.tail = new IntList(args[k], null);
+        for (k = 1, p = result; k < args.length; k += 1, p = p.rest) {
+            p.rest = new IntList(args[k], null);
         }
         return result;
     }
@@ -138,8 +138,8 @@ public class IntList {
         IntList L = (IntList) x;
         IntList p;
 
-        for (p = this; p != null && L != null; p = p.tail, L = L.tail) {
-            if (p.head != L.head) {
+        for (p = this; p != null && L != null; p = p.rest, L = L.rest) {
+            if (p.first != L.first) {
                 return false;
             }
         }
@@ -173,12 +173,12 @@ public class IntList {
 
         while (true) {
             cnt++;
-            if (hare.tail != null)
-                hare = hare.tail.tail;
+            if (hare.rest != null)
+                hare = hare.rest.rest;
             else
                 return 0;
 
-            tortoise = tortoise.tail;
+            tortoise = tortoise.rest;
 
             if (tortoise == null || hare == null)
                 return 0;
@@ -198,8 +198,8 @@ public class IntList {
         int cycleLocation = detectCycles(this);
         int cnt = 0;
 
-        for (IntList p = this; p != null; p = p.tail) {
-            out.format("%s%d", sep, p.head);
+        for (IntList p = this; p != null; p = p.rest) {
+            out.format("%s%d", sep, p.first);
             sep = ", ";
 
             cnt++;
