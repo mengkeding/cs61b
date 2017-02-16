@@ -61,7 +61,6 @@ public class ArrayDeque<Item>{
     }
     // arr[nextFirst = (nextFirst - 1) & (arr.length - 1)] = item;
     size += 1;
-<<<<<<< HEAD
     if( size == arr.length){
     	this.resize();
     }
@@ -72,11 +71,9 @@ public class ArrayDeque<Item>{
     // if(nextFirst == nextLast){
     // 	this.resize();
     // }
-=======
     if(nextFirst == nextLast){
     	resize();
     }
->>>>>>> f2def77b377c37681d053b9379f2623631883105
   }
 
 
@@ -93,7 +90,7 @@ public class ArrayDeque<Item>{
     // } 
     nextLast = (nextLast + 1) % (this.arr.length - 1);
     size += 1;
-<<<<<<< HEAD
+
     //isFull(head = (tail% (arr.length -1) + 1)) here head = NextFirst+1, tail = nextLast -1;
     //also could use if(size == arr.length)
     if(nextFirst == (nextLast - 1) % (arr.length  -1)){
@@ -102,12 +99,12 @@ public class ArrayDeque<Item>{
     // if ( (nextLast = (nextLast + 1) & (arr.length - 1)) == nextFirst){
     // 	this.resize();
     // }
-=======
+
     //copied from source code for ArrayDeque, don't really understand
     if ( (nextLast = (nextLast + 1) & (arr.length - 1)) == nextFirst){
     	resize();
     }
->>>>>>> f2def77b377c37681d053b9379f2623631883105
+
   }
 
 
@@ -124,16 +121,11 @@ public class ArrayDeque<Item>{
 //Prints the items in the Deque from first to last, separated by a space.
 //note should print the deque not the array.
   public void printDeque(){
-<<<<<<< HEAD
+
   	int pointer = 0;
     while( pointer <= this.size){
       System.out.print(this.arr[pointer] + " ");
       pointer += 1;	
-=======
-    while( nextFirst < this.size){
-      System.out.print(this.arr[nextFirst + 1] + " ");
-      nextFirst += 1;	
->>>>>>> f2def77b377c37681d053b9379f2623631883105
     }
     
   }
@@ -183,7 +175,6 @@ public class ArrayDeque<Item>{
 
   public void resize(){
   	//copied from soucecode, don't know assert
-<<<<<<< HEAD
   	// assert nextFirst == nextLast;
   	int n = arr.length;
   	Item[] a = (Item[]) new Object[2*n];
@@ -209,24 +200,6 @@ public class ArrayDeque<Item>{
    //  nextLast = n;
   // }
 
-=======
-  	assert nextFirst == nextLast;
-  	int n = arr.length;
-  	int p = nextFirst;
-  	int r = n - p;
-  	int newCapacity = n << 1;
-  	if(newCapacity < 0){
-  		throw new IllegalStateException("Sorry, deque too big");
-  	}
-    Item[] a = (Item[]) new Object[newCapacity];
-    System.arraycopy(arr, p, a, 0, r);
-    System.arraycopy(arr, 0, a, r, p);
-    arr = a;
-    nextFirst = 0;
-    nextLast = n;
-  }
-
->>>>>>> f2def77b377c37681d053b9379f2623631883105
 //Gets the item at the given index, where 0 is the front, 1 is the next item, and so forth. 
 //If no such item exists, returns null. Must not alter the deque!
 //note should get the ith item in the deque not the array.
