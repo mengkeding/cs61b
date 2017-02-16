@@ -68,6 +68,7 @@ public class ArrayDequeTest {
 		arrdq.addLast("newend");
 		passed = checkSize(7, arrdq.size()) && passed;
 
+<<<<<<< HEAD
 		arrdq.addFirst("asd");
 		passed = checkSize(8, arrdq.size()) && passed;
 
@@ -101,11 +102,21 @@ public class ArrayDequeTest {
 
 		arrdq.addFirst("iop");
 		passed = checkSize(18, arrdq.size()) && passed;
+=======
+		// arrdq.addLast("asd");
+		// passed = checkSize(8, arrdq.size()) && passed;
+
+		// arrdq.addFirst("fdhj");
+		// passed = checkSize(9, arrdq.size()) && passed;
+>>>>>>> f2def77b377c37681d053b9379f2623631883105
 
 		System.out.println("Printing out deque: ");
 		arrdq.printDeque();
 		printTestStatus(passed);
+<<<<<<< HEAD
 
+=======
+>>>>>>> f2def77b377c37681d053b9379f2623631883105
 		System.out.println(arrdq.get(0));
 		System.out.println(arrdq.get(1));
 		System.out.println(arrdq.get(2));
@@ -114,6 +125,7 @@ public class ArrayDequeTest {
 		System.out.println(arrdq.get(5));
 		System.out.println(arrdq.get(6));
 		System.out.println(arrdq.get(7));
+<<<<<<< HEAD
 		System.out.println(arrdq.get(8));
 		System.out.println(arrdq.get(9));
 		System.out.println(arrdq.get(10));
@@ -139,6 +151,8 @@ public class ArrayDequeTest {
 		System.out.println(arrdq.get(30));
 		System.out.println(arrdq.get(31));
 		
+=======
+>>>>>>> f2def77b377c37681d053b9379f2623631883105
 		
 	}
 
