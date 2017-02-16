@@ -31,10 +31,7 @@ public class ArrayDeque<Item>{
   private int size = 0;
   private int nextFirst = 0;
   private int nextLast = 1;
-<<<<<<< HEAD
   private double usageFactor; 
-=======
->>>>>>> f2def77b377c37681d053b9379f2623631883105
   //viewed the source code of java.util.ArrayDeque
   //The starting size of your array should be 8.
   private static final int MIN_INITIAL_CAPACITY = 8;
