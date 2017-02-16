@@ -45,62 +45,62 @@ public class ArrayDequeTest {
 
 		boolean passed = checkEmpty(true, arrdq.isEmpty());
 
-		arrdq.addFirst("1");
+		arrdq.addFirst("a");
 		
 		passed = checkSize(1, arrdq.size()) && passed;
 		passed = checkEmpty(false, arrdq.isEmpty()) && passed;
 
-		arrdq.addFirst("middle");
+		arrdq.addFirst("b");
 		passed = checkSize(2, arrdq.size()) && passed;
 
-		arrdq.addFirst("back");
+		arrdq.addFirst("c");
 		passed = checkSize(3, arrdq.size()) && passed;
 
-		arrdq.addFirst("end");
+		arrdq.addFirst("d");
 		passed = checkSize(4, arrdq.size()) && passed;
 
-		arrdq.addFirst("circal?");
+		arrdq.addFirst("e");
 		passed = checkSize(5, arrdq.size()) && passed;
 
-		arrdq.addFirst("circalback?");
+		arrdq.addFirst("cf");
 		passed = checkSize(6, arrdq.size()) && passed;
 
-		arrdq.addLast("newend");
+		arrdq.addLast("q");
 		passed = checkSize(7, arrdq.size()) && passed;
 
 
-		arrdq.addFirst("asd");
+		arrdq.addFirst("g");
 		passed = checkSize(8, arrdq.size()) && passed;
 
-		arrdq.addFirst("fdhj");
+		arrdq.addFirst("v");
 		passed = checkSize(9, arrdq.size()) && passed;
 		
 		arrdq.addFirst("3");
 		passed = checkSize(10, arrdq.size()) && passed;
 		
 
-		arrdq.addFirst("gda");
+		arrdq.addFirst("y");
 		passed = checkSize(11, arrdq.size()) && passed;
 
-		arrdq.addFirst("qq");
+		arrdq.addFirst("m");
 		passed = checkSize(12, arrdq.size()) && passed;
 
 		arrdq.addFirst("xx");
 		passed = checkSize(13, arrdq.size()) && passed;
 
-		arrdq.addFirst("ccv");
+		arrdq.addFirst("cq");
 		passed = checkSize(14, arrdq.size()) && passed;
 
-		arrdq.addFirst("zgs");
+		arrdq.addFirst("ii");
 		passed = checkSize(15, arrdq.size()) && passed;
 
-		arrdq.addLast("tuj");
+		arrdq.addLast("zz");
 		passed = checkSize(16, arrdq.size()) && passed;
 
-		arrdq.addFirst("mkk");
+		arrdq.addFirst("jy");
 		passed = checkSize(17, arrdq.size()) && passed;
 
-		arrdq.addFirst("iop");
+		arrdq.addFirst("qi");
 		passed = checkSize(18, arrdq.size()) && passed;
 
 		// arrdq.addLast("asd");
@@ -113,9 +113,6 @@ public class ArrayDequeTest {
 		System.out.println("Printing out deque: ");
 		arrdq.printDeque();
 		printTestStatus(passed);
-
-
-
 
 		System.out.println(arrdq.get(0));
 		System.out.println(arrdq.get(1));
@@ -150,6 +147,7 @@ public class ArrayDequeTest {
 		System.out.println(arrdq.get(29));
 		System.out.println(arrdq.get(30));
 		System.out.println(arrdq.get(31));
+	
 		
 		
 	}

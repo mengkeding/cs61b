@@ -64,6 +64,7 @@ public class ArrayDeque<Item>{
     if( size == arr.length){
     	this.resize();
     }
+  }
    
     // if(nextFirst == (nextLast - 1) % (arr.length  -1)){
     // 	this.resize();
@@ -71,10 +72,10 @@ public class ArrayDeque<Item>{
     // if(nextFirst == nextLast){
     // 	this.resize();
     // }
-    if(nextFirst == nextLast){
-    	resize();
-    }
-  }
+    // if(nextFirst == nextLast){
+    // 	resize();
+    // }
+  // }
 
 
 //Adds an item to the back of the Deque.
@@ -83,29 +84,33 @@ public class ArrayDeque<Item>{
   	  throw new NullPointerException();	
   	}     
     arr[nextLast] = item;
+    nextLast = (nextLast + 1) % (this.arr.length - 1);
+    size += 1;
     // if(nextLast == arr.length - 1){
     // 	nextLast = 0;
     // }else{
     // 	nextLast += 1;
     // } 
-    nextLast = (nextLast + 1) % (this.arr.length - 1);
-    size += 1;
+    
 
     //isFull(head = (tail% (arr.length -1) + 1)) here head = NextFirst+1, tail = nextLast -1;
-    //also could use if(size == arr.length)
-    if(nextFirst == (nextLast - 1) % (arr.length  -1)){
+    if( size == arr.length){
     	this.resize();
     }
+  }
+    // if(nextFirst == (nextLast - 1) % (arr.length  -1)){
+    // 	this.resize();
+    // }
     // if ( (nextLast = (nextLast + 1) & (arr.length - 1)) == nextFirst){
     // 	this.resize();
     // }
 
     //copied from source code for ArrayDeque, don't really understand
-    if ( (nextLast = (nextLast + 1) & (arr.length - 1)) == nextFirst){
-    	resize();
-    }
+    // if ( (nextLast = (nextLast + 1) & (arr.length - 1)) == nextFirst){
+    // 	resize();
+    // }
 
-  }
+  // }
 
 
 //Returns true if deque is empty, false otherwise.	
@@ -122,11 +127,17 @@ public class ArrayDeque<Item>{
 //note should print the deque not the array.
   public void printDeque(){
 
-  	int pointer = 0;
-    while( pointer <= this.size){
+  	int pointer = nextFirst % (arr.length - 1) + 1;
+    while( pointer <= arr.length - 1){
       System.out.print(this.arr[pointer] + " ");
       pointer += 1;	
     }
+    pointer = 0;
+    while( pointer < nextLast ){ 
+      System.out.print(this.arr[pointer] + " ");
+      pointer += 1;
+    }
+
     
   }
 
@@ -179,9 +190,10 @@ public class ArrayDeque<Item>{
   	int n = arr.length;
   	Item[] a = (Item[]) new Object[2*n];
   	System.arraycopy(this.arr, 0, a, 0, n);
-  	arr = a;
-  	nextFirst = 2*n - 1;
+    nextFirst = 2*n - 1;
     nextLast = n;
+    arr = a;
+  	
   }
 
 
@@ -204,7 +216,19 @@ public class ArrayDeque<Item>{
 //If no such item exists, returns null. Must not alter the deque!
 //note should get the ith item in the deque not the array.
   public Item get(int index){
-    return arr[index];
+  	int indexInArray;
+  	int starter = nextFirst + 1;
+    if(nextFirst == arr.length - 1){
+    	indexInArray = index;
+    }else{
+    	if( index < arr.length - 1 - starter ){
+    		indexInArray = (starter + index ) % ( arr.length - 1);
+    	}else if( index == arr.length -1 - starter){
+    		indexInArray = arr.length -1;
+    	}else{
+    		indexInArray = (starter + index ) % ( arr.length - 1) - 1;
+    	}
+    }
+    return arr[indexInArray];
   }
-
 }
