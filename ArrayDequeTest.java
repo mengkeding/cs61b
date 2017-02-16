@@ -37,6 +37,7 @@ public class ArrayDequeTest {
 	public static void addIsEmptySizeTest() {
 		System.out.println("Running add/isEmpty/Size test.");
 		System.out.println("Make sure to uncomment the lines below");
+
 		
 		ArrayDeque<String> arrdq = new ArrayDeque<String>();
 
@@ -47,17 +48,42 @@ public class ArrayDequeTest {
 		passed = checkSize(1, arrdq.size()) && passed;
 		passed = checkEmpty(false, arrdq.isEmpty()) && passed;
 
-		arrdq.addLast("middle");
+		arrdq.addFirst("middle");
 		passed = checkSize(2, arrdq.size()) && passed;
 
-		arrdq.addLast("back");
+		arrdq.addFirst("back");
 		passed = checkSize(3, arrdq.size()) && passed;
+
+		arrdq.addFirst("end");
+		passed = checkSize(4, arrdq.size()) && passed;
+
+		arrdq.addFirst("circal?");
+		passed = checkSize(5, arrdq.size()) && passed;
+
+		arrdq.addFirst("circalback?");
+		passed = checkSize(6, arrdq.size()) && passed;
+
+		arrdq.addLast("newend");
+		passed = checkSize(7, arrdq.size()) && passed;
+
+		// arrdq.addLast("asd");
+		// passed = checkSize(8, arrdq.size()) && passed;
+
+		// arrdq.addFirst("fdhj");
+		// passed = checkSize(9, arrdq.size()) && passed;
 
 		System.out.println("Printing out deque: ");
 		arrdq.printDeque();
 
 		printTestStatus(passed);
+		System.out.println(arrdq.get(0));
 		System.out.println(arrdq.get(1));
+		System.out.println(arrdq.get(2));
+		System.out.println(arrdq.get(3));
+		System.out.println(arrdq.get(4));
+		System.out.println(arrdq.get(5));
+		System.out.println(arrdq.get(6));
+		System.out.println(arrdq.get(7));
 		
 	}
 
