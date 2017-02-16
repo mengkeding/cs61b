@@ -6,7 +6,7 @@ For this implementation, your operations are subject to the following rules:
 
 add and remove must take constant time, except during resizing operations.
 get and size must take constant time.
-The starting size of your array should be 8.
+
 The amount of memory that your program uses at any given time must be proportional to the number of items. 
 For example, if you add 10,000 items to the Deque, and then remove 9,999 items, you shouldn't still be using an array of length 10,000ish. 
 For arrays of length 16 or more, your usage factor should always be at least 25%. For smaller arrays, your usage factor can be arbitrarily low.
@@ -30,8 +30,10 @@ public class ArrayDeque<Item>{
   private Item[] arr;
   private int size = 0;
   private int nextFirst = 0;
-  private int nextLast = 0;
+  private int nextLast = 1;
+  private double usageFactor; 
   //viewed the source code of java.util.ArrayDeque
+  //The starting size of your array should be 8.
   private static final int MIN_INITIAL_CAPACITY = 8;
   
 
@@ -40,7 +42,7 @@ public class ArrayDeque<Item>{
 //your ArrayDeque class must include a zero argument constructor that creates an empty Deque.
 
   public ArrayDeque(){
-  	arr =  (Item[]) new Object[8];
+  	arr =  (Item[]) new Object[MIN_INITIAL_CAPACITY];
   }
 
 //Adds an item to the front of the Deque.
@@ -48,23 +50,51 @@ public class ArrayDeque<Item>{
 //to the end of the array (so the new front item in the deque will be the last item in the underlying array). 
 
   public void addFirst(Item item){
-  	if(nextFirst == 0){
-  		nextFirst = arr.length - 1;	
-  	}
+  	if (item == null){
+  		 throw new NullPointerException();
+  	}       
     arr[nextFirst] = item;
-    nextFirst -= 1;
+    if(this.nextFirst == 0){
+  		nextFirst = this.arr.length - 1;	
+  	}else{
+  		this.nextFirst -= 1;
+    }
+    // arr[nextFirst = (nextFirst - 1) & (arr.length - 1)] = item;
     size += 1;
+    if( size == arr.length){
+    	this.resize();
+    }
+   
+    // if(nextFirst == (nextLast - 1) % (arr.length  -1)){
+    // 	this.resize();
+    // }
+    // if(nextFirst == nextLast){
+    // 	this.resize();
+    // }
   }
 
 
 //Adds an item to the back of the Deque.
   public void addLast(Item item){ 
-    if(nextLast == arr.length - 1){
-    	nextLast = 0;
-    }
+  	if (item == null){
+  	  throw new NullPointerException();	
+  	}     
     arr[nextLast] = item;
-    nextLast += 1;
+    // if(nextLast == arr.length - 1){
+    // 	nextLast = 0;
+    // }else{
+    // 	nextLast += 1;
+    // } 
+    nextLast = (nextLast + 1) % (this.arr.length - 1);
     size += 1;
+    //isFull(head = (tail% (arr.length -1) + 1)) here head = NextFirst+1, tail = nextLast -1;
+    //also could use if(size == arr.length)
+    if(nextFirst == (nextLast - 1) % (arr.length  -1)){
+    	this.resize();
+    }
+    // if ( (nextLast = (nextLast + 1) & (arr.length - 1)) == nextFirst){
+    // 	this.resize();
+    // }
   }
 
 
@@ -75,14 +105,18 @@ public class ArrayDeque<Item>{
 
 // Returns the number of items in the Deque.
   public int size(){
-	return size;
+	return this.size;
   }
 
 //Prints the items in the Deque from first to last, separated by a space.
+//note should print the deque not the array.
   public void printDeque(){
-    for(int i = nextFirst + 1; i < nextLast; i++){
-      System.out.print(arr[i] + " ");	
+  	int pointer = 0;
+    while( pointer <= this.size){
+      System.out.print(this.arr[pointer] + " ");
+      pointer += 1;	
     }
+    
   }
 
 //Removes and returns the item at the front of the Deque. If no such item exists, returns null.	
@@ -128,11 +162,38 @@ public class ArrayDeque<Item>{
 	// return item;
   }
 
+  public void resize(){
+  	//copied from soucecode, don't know assert
+  	// assert nextFirst == nextLast;
+  	int n = arr.length;
+  	Item[] a = (Item[]) new Object[2*n];
+  	System.arraycopy(this.arr, 0, a, 0, n);
+  	arr = a;
+  	nextFirst = 2*n - 1;
+    nextLast = n;
+  }
+
+
+  	// int n = arr.length;
+  	// int p = nextFirst;
+  	// int r = n - p;
+  	// int newCapacity = n << 1;
+  	// if(newCapacity < 0){
+  	// 	throw new IllegalStateException("Sorry, deque too big");
+  	// }
+   //  Item[] a = (Item[]) new Object[newCapacity];
+   //  System.arraycopy(arr, p, a, 0, r);
+   //  System.arraycopy(arr, 0, a, r, p);
+   //  arr = a;
+   //  nextFirst = 0;
+   //  nextLast = n;
+  // }
+
 //Gets the item at the given index, where 0 is the front, 1 is the next item, and so forth. 
 //If no such item exists, returns null. Must not alter the deque!
+//note should get the ith item in the deque not the array.
   public Item get(int index){
     return arr[index];
   }
-
 
 }
