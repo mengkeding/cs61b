@@ -21,9 +21,17 @@ public class IntListTest {
     }
 
     @Test
-    public void testdSquareList() {
+    public void testdSquareListIterative() {
         IntList L = IntList.list(1, 2, 3);
-        IntList.dSquareList(L);
+        IntList.dSquareListIterative(L);
+        assertEquals(IntList.list(1, 4, 9), L);
+    }
+
+
+    @Test
+    public void testdSquareListRecursive() {
+        IntList L = IntList.list(1, 2, 3);
+        IntList.dSquareListRecursive(L);
         assertEquals(IntList.list(1, 4, 9), L);
     }
 

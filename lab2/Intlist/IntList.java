@@ -1,3 +1,5 @@
+import org.w3c.dom.ls.LSException;
+
 import java.util.Formatter;
 
 /**
@@ -35,11 +37,19 @@ public class IntList {
     /**
      * Returns a list equal to L with all elements squared. Destructive.
      */
-    public static void dSquareList(IntList L) {
+    public static void dSquareListIterative(IntList L) {
         while (L != null) {
             L.first = L.first * L.first;
             L = L.rest;
         }
+    }
+
+    public static IntList dSquareListRecursive(IntList L) {
+        if(L == null){
+            return null;
+        }
+        L.first *= L.first;
+        return dSquareListRecursive(L.rest);
     }
 
     /**
@@ -49,15 +59,15 @@ public class IntList {
         if (L == null) {
             return null;
         }
-        IntList res = new IntList(L.first * L.first, null);
-        IntList ptr = res;
-        L = L.rest;
-        while (L != null) {
-            ptr.rest = new IntList(L.first * L.first, null);
-            L = L.rest;
-            ptr = ptr.rest;
+        IntList B = L.rest;
+        IntList LSquared = new IntList(L.first*L.first, null);
+        IntList C = LSquared;
+        while (B != null) {
+            C.rest = new IntList(B.first * B.first, null);
+            B = B.rest;
+            C = C.rest;
         }
-        return res;
+        return LSquared;
     }
 
     /**
@@ -66,8 +76,9 @@ public class IntList {
     public static IntList squareListRecursive(IntList L) {
         if (L == null) {
             return null;
+        }else{
+            return new IntList(L.first * L.first, squareListRecursive(L.rest));
         }
-        return new IntList(L.first * L.first, squareListRecursive(L.rest));
     }
 
     /** DO NOT MODIFY ANYTHING ABOVE THIS LINE! */
@@ -242,7 +253,8 @@ public class IntList {
 
     public static void main(String[] args) {
         IntList origL = IntList.list(1, 2, 3);
-        dSquareList(origL);
+        dSquareListIterative(origL);
+        dSquareListRecursive(origL);
         squareListIterative(origL);
     }
 }
