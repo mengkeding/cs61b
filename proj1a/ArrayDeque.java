@@ -30,8 +30,9 @@ public class ArrayDeque<Item>{
   private Item[] arr;
   private int size = 0;
   private int nextFirst = 0;
-  private int nextLast = 1;
-  private double usageFactor; 
+  private int nextLast = 1; 
+  private double usageFactor;
+
   //viewed the source code of java.util.ArrayDeque
   //The starting size of your array should be 8.
   private static final int MIN_INITIAL_CAPACITY = 8;
@@ -44,6 +45,8 @@ public class ArrayDeque<Item>{
   public ArrayDeque(){
   	arr =  (Item[]) new Object[MIN_INITIAL_CAPACITY];
   }
+
+
 
 //Adds an item to the front of the Deque.
 //if your front pointer is at position zero, and you addFirst, the front pointer should loop back around 
@@ -91,8 +94,6 @@ public class ArrayDeque<Item>{
     // }else{
     // 	nextLast += 1;
     // } 
-    
-
     //isFull(head = (tail% (arr.length -1) + 1)) here head = NextFirst+1, tail = nextLast -1;
     if( size == arr.length){
     	this.resize();
@@ -146,20 +147,22 @@ public class ArrayDeque<Item>{
     if(size == 0){
     	return null;
     }
-  	size -= 1;
+    Item item;
   	if(nextFirst == arr.length - 1){
-  		Item item = (Item) arr[0];
+  		item = (Item) arr[0];
   		arr[0] = null;
   		nextFirst = 0;
-  		return item;
   	}else{
-  		Item item = (Item) arr[nextFirst + 1];
+  		item = (Item) arr[nextFirst + 1];
   		arr[nextFirst + 1] = null;
   	    nextFirst += 1;
-  	    return item;
   	}
-  	// size -= 1;
-  	// return item;
+  	size -= 1;
+  	// usageFactor = this.size / arr.length;
+  	// if(arr.length >= 16 && usageFactor <= 0.25){
+   //    this.keepUsage();
+   //  }
+  	return item;
   }
 
 //Removes and returns the item at the back of the Deque. If no such item exists, returns null.
@@ -167,26 +170,27 @@ public class ArrayDeque<Item>{
   	if(size == 0){
   		return null;
   	}
-  	size -= 1;
+  	Item item;
   	if(nextLast == 0){
-  		//Item item = (Item) arr[arr.length - 1];
-  		Item item = arr[arr.length - 1];
+  		item = (Item) arr[arr.length - 1];
   		arr[arr.length - 1] = null;
   		nextLast = arr.length - 1;
-  		return item;
+  		//return item;
 	}else{
-		Item item = (Item) arr[nextLast - 1];
+		item = (Item) arr[nextLast - 1];
 		arr[nextLast - 1] = null;
 		nextLast -= 1;
-		return item;
+    	//return item;
 	}
-	// size -= 1;
-	// return item;
+	size -= 1;
+  	// usageFactor = this.size / arr.length;
+  	// if(arr.length >= 16 && usageFactor <= 0.25){
+   //    this.keepUsage();
+   //  }
+	return item;
   }
 
   public void resize(){
-  	//copied from soucecode, don't know assert
-  	// assert nextFirst == nextLast;
   	int n = arr.length;
   	Item[] a = (Item[]) new Object[2*n];
   	System.arraycopy(this.arr, 0, a, 0, n);
@@ -195,6 +199,22 @@ public class ArrayDeque<Item>{
     arr = a;
   	
   }
+
+  private void keepUsage(){
+  	int n = arr.length;
+  	Item[] a = (Item[]) new Object[n/2];
+  	if(nextFirst == arr.length - 1){
+  	  System.arraycopy(this.arr, 0, a, 0, size);
+  	}else{
+  	  System.arraycopy(this.arr, nextFirst + 1, a, 0, Math.min(size, arr.length - nextFirst - 1) );
+      // System.arraycopy(this.arr, 0, a, Math.min(size, arr.length - nextFirst - 1) , size - Math.min(size, arr.length - nextFirst - 1));
+    }
+    nextFirst = n/2 - 1 ; 
+    nextLast = size;
+    arr = a;
+  }
+  	
+  
 
 
   	// int n = arr.length;

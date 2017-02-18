@@ -58,11 +58,20 @@ public class IntListTest {
     }
 
     @Test
-    public void testCatenate() {
+    public void testCatenateRecursive() {
         IntList A = IntList.list(1, 2, 3);
         IntList B = IntList.list(4, 5, 6);
         IntList exp = IntList.list(1, 2, 3, 4, 5, 6);
-        assertEquals(exp, IntList.catenate(A, B));
+        assertEquals(exp, IntList.catenateRecursive(A, B));
+        assertEquals(IntList.list(1, 2, 3), A);
+    }
+
+    @Test
+    public void testCatenateIterative() {
+        IntList A = IntList.list(1, 2, 3);
+        IntList B = IntList.list(4, 5, 6);
+        IntList exp = IntList.list(1, 2, 3, 4, 5, 6);
+        assertEquals(exp, IntList.catenateIterative(A, B));
         assertEquals(IntList.list(1, 2, 3), A);
     }
 

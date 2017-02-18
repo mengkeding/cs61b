@@ -122,7 +122,6 @@ public class ArrayDequeTest {
 		System.out.println(arrdq.get(5));
 		System.out.println(arrdq.get(6));
 		System.out.println(arrdq.get(7));
-
 		System.out.println(arrdq.get(8));
 		System.out.println(arrdq.get(9));
 		System.out.println(arrdq.get(10));
@@ -147,9 +146,6 @@ public class ArrayDequeTest {
 		System.out.println(arrdq.get(29));
 		System.out.println(arrdq.get(30));
 		System.out.println(arrdq.get(31));
-	
-		
-		
 	}
 
 	/** Adds an item, then removes an item, and ensures that dll is empty afterwards. */
@@ -163,16 +159,101 @@ public class ArrayDequeTest {
 		// should be empty 
 		boolean passed = checkEmpty(true, arrdq.isEmpty());
 
-		arrdq.addFirst(10);
+		arrdq.addFirst(0);
 		// should not be empty 
+		passed = checkEmpty(false, arrdq.isEmpty()) && passed;
+		
+		arrdq.addFirst(2);
+		// should not be empty 
+		passed = checkEmpty(false, arrdq.isEmpty()) && passed;
+		
+		arrdq.addLast(3);
+		// should not be empty 
+		passed = checkEmpty(false, arrdq.isEmpty()) && passed;
+		
+		arrdq.addLast(23);
+		// should not be empty 
+		passed = checkEmpty(false, arrdq.isEmpty()) && passed;
+
+		arrdq.addFirst(11);
+		// should not be empty 
+		passed = checkEmpty(false, arrdq.isEmpty()) && passed;
+		arrdq.addFirst(12);
+		// should not be empty 
+		passed = checkEmpty(false, arrdq.isEmpty()) && passed;
+
+		arrdq.addLast(31);
+		// should not be empty 
+		passed = checkEmpty(false, arrdq.isEmpty()) && passed;
+		
+		arrdq.addFirst(15);
+		// should not be empty 
+		passed = checkEmpty(false, arrdq.isEmpty()) && passed;
+		
+		arrdq.addFirst(26);
+		// should not be empty 
+		passed = checkEmpty(false, arrdq.isEmpty()) && passed;
+		
+		arrdq.addLast(67);
+		// should not be empty 
+		passed = checkEmpty(false, arrdq.isEmpty()) && passed;
+		
+		arrdq.addFirst(54);
+		// should not be empty 
+		passed = checkEmpty(false, arrdq.isEmpty()) && passed;
+		
+		arrdq.removeLast();
+		// should be empty 
+		passed = checkEmpty(false, arrdq.isEmpty()) && passed;
+		
+		arrdq.removeFirst();
+		// should be empty 
+		passed = checkEmpty(false, arrdq.isEmpty()) && passed;
+		
+		arrdq.removeFirst();
+		// should be empty 
+		passed = checkEmpty(false, arrdq.isEmpty()) && passed;
+		
+		arrdq.removeLast();
+		// should be empty 
+		passed = checkEmpty(false, arrdq.isEmpty()) && passed;
+		
+		arrdq.removeLast();
+		// should be empty 
+		passed = checkEmpty(false, arrdq.isEmpty()) && passed;
+		
+		arrdq.removeFirst();
+		// should be empty 
+		passed = checkEmpty(false, arrdq.isEmpty()) && passed;
+
+		arrdq.removeLast();
+		// should be empty 
 		passed = checkEmpty(false, arrdq.isEmpty()) && passed;
 
 		arrdq.removeFirst();
 		// should be empty 
-		passed = checkEmpty(true, arrdq.isEmpty()) && passed;
+		passed = checkEmpty(false, arrdq.isEmpty()) && passed;
 
+		System.out.println("Printing out deque: ");
+		arrdq.printDeque();
 		printTestStatus(passed);
-		
+
+		System.out.println(arrdq.get(0));
+		System.out.println(arrdq.get(1));
+		System.out.println(arrdq.get(2));
+		System.out.println(arrdq.get(3));
+		System.out.println(arrdq.get(4));
+		System.out.println(arrdq.get(5));
+		System.out.println(arrdq.get(6));
+		System.out.println(arrdq.get(7));
+		System.out.println(arrdq.get(8));
+		System.out.println(arrdq.get(9));
+		System.out.println(arrdq.get(10));
+		System.out.println(arrdq.get(11));
+		System.out.println(arrdq.get(12));
+		System.out.println(arrdq.get(13));
+		System.out.println(arrdq.get(14));
+		System.out.println(arrdq.get(15));
 	}
 
 	public static void main(String[] args) {
