@@ -7,7 +7,7 @@
  * Just for fun: Uncomment the main method in the provided PalindromeFinder.java class and you'll get a list of
  * all palindromes of length 4 or more in English (assuming you also downloaded the provided words file).
  */
-public class Palindrome {
+public class Palindrome implements CharacterComparator {
 
     // The wordToDeque method should be straightforward. You will simply build a Deque where the characters in the deque
     // appear in the same order as in the word.
@@ -36,6 +36,42 @@ public class Palindrome {
         }
     }
 
+
+
+    //The method will return true if the word is a palindrome according to the character comparison test
+    // provided by the CharacterComparator passed in as argument cc. A character comparator is defined as
+    // shown below:
+
+
+//    /** This interface defines a method for determining equality of characters. */
+//    public interface CharacterComparator {
+//        /** Returns true if characters are equal by the rules of the implementing class. */
+//        boolean equalChars(char x, char y);
+//    }
+
+    @Override
+    public boolean equalChars(char x, char y) {
+        return x == y;
+    }
+
+    public static boolean isPalindrome(String word, CharacterComparator cc){
+        boolean isEqual = false;
+        for(int i = 0, j = word.length() - 1; i < word.length()/2; i++,j--){
+           if(cc.equalChars(word.charAt(i),word.charAt(j)) == false) {
+              isEqual = false;
+           }else{
+              isEqual = true;
+           }
+
+        }
+        return isEqual;
+
+    }
+
+
+
+
+
     private static String reverseString(String str){
         if(str.length() == 1){
             return str;
@@ -47,10 +83,12 @@ public class Palindrome {
     }
 
     public static void main(String[] args){
+        CharacterComparator cc = new Palindrome();
         wordToDeque("morning");
         System.out.println(isPalindrome("racecar"));
         System.out.println(isPalindrome("aaa"));
         System.out.println(isPalindrome("noon"));
         System.out.println(isPalindrome("a"));
+        System.out.println(isPalindrome("great", cc));
     }
 }
