@@ -1,5 +1,4 @@
 import static org.junit.Assert.*;
-
 import org.junit.Test;
 
 public class IntListTest {
@@ -21,9 +20,17 @@ public class IntListTest {
     }
 
     @Test
-    public void testdSquareList() {
+    public void testdSquareListIterative() {
         IntList L = IntList.list(1, 2, 3);
-        IntList.dSquareList(L);
+        IntList.dSquareListIterative(L);
+        assertEquals(IntList.list(1, 4, 9), L);
+    }
+
+
+    @Test
+    public void testdSquareListRecursive() {
+        IntList L = IntList.list(1, 2, 3);
+        IntList.dSquareListRecursive(L);
         assertEquals(IntList.list(1, 4, 9), L);
     }
 
@@ -58,16 +65,45 @@ public class IntListTest {
     }
 
     @Test
-    public void testCatenate() {
-        IntList A = IntList.list(1,2,3);
+    public void testCatenateRecursive() {
+        IntList A = IntList.list(1, 2, 3);
         IntList B = IntList.list(4, 5, 6);
         IntList exp = IntList.list(1, 2, 3, 4, 5, 6);
-        assertEquals(exp, IntList.catenate(A, B));
+        assertEquals(exp, IntList.catenateRecursive(A, B));
         assertEquals(IntList.list(1, 2, 3), A);
     }
 
-    /** If you're running this from the command line, you'll need
-      * to add a main method. See ArithmeticTest.java for an
-      * example. */
+    @Test
+    public void testCatenateIterative() {
+        IntList A = IntList.list(1, 2, 3);
+        IntList B = IntList.list(4, 5, 6);
+        IntList exp = IntList.list(1, 2, 3, 4, 5, 6);
+        assertEquals(exp, IntList.catenateIterative(A, B));
+        assertEquals(IntList.list(1, 2, 3), A);
+    }
 
+    /**
+     * That the function returns a reversed list.
+     * That the function is destructive, i.e. when it is done running,
+     * the list pointed to by A has been tampered with.
+     * You can use assertNotEquals. This is sort of a silly test.
+     * That the method handles a null input properly.
+     */
+    @Test
+    public void testReverse() {
+        IntList A = IntList.list(1, 2, 3, 4, 5, 6);
+        IntList exp = IntList.list(6, 5, 4, 3, 2, 1);
+        assertNotEquals(exp, A);
+        assertEquals(exp, IntList.reverse(A));
+        IntList B = null;
+        IntList expB = null;
+        assertEquals(expB, IntList.reverse(B));
+    }
+     /**
+      * Returns the reverse of the given IntList.
+      * This method is destructive. If given null
+      * as an input, returns null.
+      * public static IntList reverse(IntList A){}
+      */
 }
+

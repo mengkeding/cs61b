@@ -5,7 +5,7 @@ import java.util.LinkedList;
  * The aesthete will be especially alarmed by the fact that this
  * supposed ArrayDeque is actually using a LinkedList. SAD!
  */
-public class ArrayDequeSolution<Item> extends LinkedList<Item> {
+public class ArrayDequeSolution<Item> extends LinkedList<Item> implements Deque<Item>{
     public void printDeque() {
         System.out.println("dummy");
     }
@@ -29,4 +29,16 @@ public class ArrayDequeSolution<Item> extends LinkedList<Item> {
             return null;
         }
     }
+
+    //Class 'ArrayDequeSolution' must either be declared abstract or implement abstract method 'addLast()' in 'Deque'
+    public void addFirst(Item){
+
+    }
+
+    //Class 'ArrayDequeSolution' must either be declared abstract or implement abstract method 'addLast()' in 'Deque'
+    public void addLast(Item){
+
+    }
+
+
 }
