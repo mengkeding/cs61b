@@ -17,7 +17,7 @@ public class Palindrome {
         for(int i = 0; i < word.length(); i++){
             wordInDeque.addLast(word.charAt(i));
         }
-        wordInDeque.printDeque();
+        return wordInDeque;
     }
 
 
@@ -29,11 +29,28 @@ public class Palindrome {
     // properly. In fact, if you forgot that they exist, your code will work fine.
 
     public static boolean isPalindrome(String word){
+        if(word.length() == 1 || word.length() == 0 ){
+            return true;
+        }else{
+            return reverseString(word).equals(word);
+        }
+    }
 
+    private static String reverseString(String str){
+        if(str.length() == 1){
+            return str;
+        }else{
+            String reversed = reverseString(str.substring(1)) + str.charAt(0);
+            return reversed;
+        }
 
+    }
 
-
-
-
+    public static void main(String[] args){
+        wordToDeque("morning");
+        System.out.println(isPalindrome("racecar"));
+        System.out.println(isPalindrome("aaa"));
+        System.out.println(isPalindrome("noon"));
+        System.out.println(isPalindrome("a"));
     }
 }

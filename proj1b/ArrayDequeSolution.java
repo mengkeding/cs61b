@@ -31,12 +31,12 @@ public class ArrayDequeSolution<Item> extends LinkedList<Item> implements Deque<
     }
 
     //Class 'ArrayDequeSolution' must either be declared abstract or implement abstract method 'addLast()' in 'Deque'
-    public void addFirst(Item){
+    public void addFirst(Item item){
 
     }
 
     //Class 'ArrayDequeSolution' must either be declared abstract or implement abstract method 'addLast()' in 'Deque'
-    public void addLast(Item){
+    public void addLast(Item item){
 
     }
 
