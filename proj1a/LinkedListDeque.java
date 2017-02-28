@@ -1,5 +1,3 @@
-
-
 public class LinkedListDeque<Item>{
  
   private class Node{
