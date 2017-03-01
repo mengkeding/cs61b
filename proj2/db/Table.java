@@ -63,7 +63,7 @@ public class Table {
     public static void main(String[] args) {
         In in = new In(args[0]);
         int numOfCol = in.readInt();
-        int numOfRow= in.readInt();
+        int numOfRow = in.readInt();
         String [][] rowCol = new String [numOfRow][numOfCol];
         rowCol[0][0] = in.readLine();
         rowCol[0][1] = in.readLine();
@@ -75,14 +75,16 @@ public class Table {
         Table T1 = new Table("T1", rowCol);
         System.out.println(T1.tableName);
         System.out.println(T1.numOfCol);
-        for(int i=0; i < numOfRow; i++)
-        {
-            for(int j=0; j < numOfCol; j++)
-            {
-                System.out.print(T1.table[i][j]+" ");
-            }
-            System.out.println("\n");
-        }
+        System.out.println(Arrays.toString(T1.colName));
+        System.out.println(Arrays.deepToString(T1.table).replace("], ", "]\n"));
+//        for(int i=0; i < numOfRow; i++)
+//        {
+//            for(int j=0; j < numOfCol; j++)
+//            {
+//                System.out.print(T1.table[i][j]+" ");
+//            }
+//            System.out.println("\n");
+//        }
     }
 
 }
