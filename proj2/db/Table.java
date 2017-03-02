@@ -1,5 +1,6 @@
 package db;
 import edu.princeton.cs.algs4.*;
+import org.junit.Test;
 
 import java.util.Arrays;
 
@@ -25,35 +26,50 @@ import java.util.Arrays;
 public class Table {
     public final String tableName;
     public final int numOfCol;
-    public final String [] colName;
+    public final String[] colName;
     public int numOfRow;
-    public String [][] table;
+    public String[][] tableData;
 
 
-    public Table(String name, String [][] rowCol){
+    public Table(String name, String[][] rowCol) {
         this.tableName = name;
         this.numOfCol = rowCol[0].length;
         this.numOfRow = rowCol.length;
-        this.colName = rowCol [0];
-        table = new String[numOfRow][numOfCol];
-        for (int i = 0; i < numOfRow; i++){
+        this.colName = rowCol[0];
+        tableData = new String[numOfRow][numOfCol];
+        for (int i = 0; i < numOfRow; i++) {
             for (int j = 0; j < numOfCol; j++) {
-                table[i][j] = rowCol[i][j];
+                tableData[i][j] = rowCol[i][j];
             }
         }
 
     }
 
-    public void addRow(String[] rowToAdd){
-        if(rowToAdd == null){
+    public void addRow(String[] rowToAdd) {
+        if (rowToAdd == null) {
             return;
         }
         numOfRow += 1;
-        String[][] temp = table;
-        table = new String[numOfRow][numOfCol];
-        System.arraycopy(temp,0,table,0,temp.length);
-        table[numOfRow - 1] = rowToAdd;
+        String[][] temp = tableData;
+        tableData = new String[numOfRow][numOfCol];
+        System.arraycopy(temp, 0, tableData, 0, temp.length);
+        tableData[numOfRow - 1] = rowToAdd;
     }
+
+    public static Table join(Table a, Table b){
+        
+
+    }
+
+
+
+
+
+
+
+
+
+}
 
 
 //        T1
@@ -63,25 +79,25 @@ public class Table {
 //        8	    3
 //        13	7
 
-    public static void main(String[] args) {
-        In in = new In(args[0]);
-        int numOfCol = in.readInt();
-        int numOfRow = in.readInt();
-        String [][] rowCol = new String [numOfRow][numOfCol];
-        rowCol[0][0] = in.readLine();
-        rowCol[0][1] = in.readLine();
-        for (int i = 1; i < numOfRow; i++){
-            for (int j = 0; j < numOfCol; j++){
-                rowCol[i][j] = in.readString();
-            }
-        }
-        Table T1 = new Table("T1", rowCol);
-        System.out.println(T1.tableName);
-        System.out.println(T1.numOfCol);
-        System.out.println(Arrays.toString(T1.colName));
-        System.out.println(Arrays.deepToString(T1.table).replace("], ", "]\n"));
-        T1.addRow(new String[] {"4", "5"});
-        System.out.println(Arrays.deepToString(T1.table).replace("], ", "]\n"));
+//    public static void main(String[] args) {
+//        In in = new In(args[0]);
+//        int numOfCol = in.readInt();
+//        int numOfRow = in.readInt();
+//        String [][] rowCol = new String [numOfRow][numOfCol];
+//        rowCol[0][0] = in.readLine();
+//        rowCol[0][1] = in.readLine();
+//        for (int i = 1; i < numOfRow; i++){
+//            for (int j = 0; j < numOfCol; j++){
+//                rowCol[i][j] = in.readString();
+//            }
+//        }
+//        Table T1 = new Table("T1", rowCol);
+//        System.out.println(T1.tableName);
+//        System.out.println(T1.numOfCol);
+//        System.out.println(Arrays.toString(T1.colName));
+//        System.out.println(Arrays.deepToString(T1.tableData).replace("], ", "]\n"));
+//        T1.addRow(new String[] {"4", "5"});
+//        System.out.println(Arrays.deepToString(T1.tableData).replace("], ", "]\n"));
 //        for(int i=0; i < numOfRow; i++)
 //        {
 //            for(int j=0; j < numOfCol; j++)
@@ -90,6 +106,6 @@ public class Table {
 //            }
 //            System.out.println("\n");
 //        }
-    }
+//    }
 
-}
+//}
