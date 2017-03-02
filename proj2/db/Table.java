@@ -49,7 +49,10 @@ public class Table {
             return;
         }
         numOfRow += 1;
-        table[numOfRow] = rowToAdd;
+        String[][] temp = table;
+        table = new String[numOfRow][numOfCol];
+        System.arraycopy(temp,0,table,0,temp.length);
+        table[numOfRow - 1] = rowToAdd;
     }
 
 
@@ -76,6 +79,8 @@ public class Table {
         System.out.println(T1.tableName);
         System.out.println(T1.numOfCol);
         System.out.println(Arrays.toString(T1.colName));
+        System.out.println(Arrays.deepToString(T1.table).replace("], ", "]\n"));
+        T1.addRow(new String[] {"4", "5"});
         System.out.println(Arrays.deepToString(T1.table).replace("], ", "]\n"));
 //        for(int i=0; i < numOfRow; i++)
 //        {
