@@ -35,6 +35,9 @@ Methods:
 
   /** Returns the join of all the Tables */
   public static Table join(Table[] tables)
+  
+  /** Returns true if two tables have the same column names */
+  public boolean hasCommonColumnNames(Table a, Table b)
 
   /** Gets all column names that are common to both tables. */
   public String[] getCommonColumnNames(Table a, Table b)
