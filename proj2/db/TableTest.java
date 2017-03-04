@@ -77,6 +77,8 @@ public class TableTest {
         String[] actualCommonColumnNames = Table.getCommonColumnNames(a, b);
         assertArrayEquals(expectedCommonColumnNames, actualCommonColumnNames);
     }
+
+
 }
 
 

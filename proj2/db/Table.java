@@ -24,6 +24,19 @@ import java.util.StringJoiner;
  * The most important part of your design for this project is how you'll store your tables:
  * simpler design might use a Table class only, which stores everything in a String[][].
  *
+ *
+ * We strongly encourage you to get the internal functionality working first (i.e. joins) before implementing
+ * the parsing and execution of commands. After completing an internal feature, write your own unit tests to
+ * verify that it works, and don't move on until you do so. Once you have a solid foundation, try to get commands
+ * such as create table, print and some basic selects working. In addition, don't try and implement all internal
+ * functionality at once. Some examples of starting with the basic functionality:
+
+    Don't try to implement assorted types at first, start by assuming everything is a string.
+    Don't try to implement the joining of many tables at first, start with just the join of two tables.
+    Don't try to implement multiple conditional statements at first, start with just one conditional.
+    Don't try to implement the full select clause definition at first. Start with selecting rows from one table,
+    then move on to more complicated selects.
+ *
  */
 public class Table {
     public final int numOfCol;
@@ -36,7 +49,7 @@ public class Table {
     public Table(String[] colNames, String[] colTypes, String[][] rowCol) {
         this.numOfCol = rowCol[0].length;
         this.numOfRow = rowCol.length;
-        this.colNames= colNames;
+        this.colNames = colNames;
         this.colTypes = colTypes;
         tableData = new String[numOfRow][numOfCol];
         for (int i = 0; i < numOfRow; i++) {
@@ -66,7 +79,9 @@ public class Table {
      * creating a basic table representation
      */
 
-    /** Returns the join of Table a and Table b. */
+    /**
+     * Returns the join of Table a and Table b.
+     */
     public Table join(Table a, Table b) {
         String[] joinedColNames;
         String[] joinedColTypes;
@@ -74,12 +89,16 @@ public class Table {
         int numOfJoinedCol;
         String[][] joinedtableData;
         String[] commonColumnNames;
+        ArrayList<Integer> aCommonColNamesIndex = new ArrayList<>();
+        ArrayList<Integer> bCommonColNamesIndex = new ArrayList<>();
+
+
 
         //In the case that the input tables have no columns in common, the resulting table is what is called the
         //Cartesian Product of the tables. That is, each row of table A is considered to match each row of table B
         //as if they had a column in common.
 
-        if (!hasCommonColumnNames(a,b)) {
+        if (!hasCommonColumnNames(a, b)) {
             joinedColNames = concat(a.colNames, b.colNames);
             joinedColTypes = concat(a.colTypes, b.colTypes);
             numOfJoinedRow = a.numOfRow + b.numOfRow - 1;
@@ -88,77 +107,80 @@ public class Table {
             Table cartesianProduct = new Table(joinedColNames, joinedColTypes, joinedtableData);
             return cartesianProduct;
         } else {
-            commonColumnNames = getCommonColumnNames(a,b);
+
+            commonColumnNames = getCommonColumnNames(a, b);
             joinedColNames = new String[]{};
-            for (int i = 0; i < commonColumnNames.length; i++ ){
+            for (int i = 0; i < commonColumnNames.length; i++) {
                 joinedColNames[i] = commonColumnNames[i];
             }
-            for (int i = 0; i < a.colNames.length; i++ ){
-                for(int j = 0; j < commonColumnNames.length; j++){
-                    if(a.colNames[i] != joinedColNames[j]){
+            for (int i = 0; i < a.colNames.length; i++) {
+                for (int j = 0; j < commonColumnNames.length; j++) {
+                    if (a.colNames[i] != joinedColNames[j]) {
                         joinedColNames[commonColumnNames.length - 1 + i] = a.colNames[i];
                     }
                 }
             }
-            for (int i = 0; i < b.colNames.length; i++ ){
-                for(int j = 0; j < commonColumnNames.length; j++){
-                    if(b.colNames[i] != joinedColNames[j]){
+            for (int i = 0; i < b.colNames.length; i++) {
+                for (int j = 0; j < commonColumnNames.length; j++) {
+                    if (b.colNames[i] != joinedColNames[j]) {
                         joinedColNames[a.numOfCol - 1 + i] = b.colNames[i];
                     }
                 }
             }
+
             numOfJoinedCol = joinedColNames.length;
             joinedColTypes = new String[numOfJoinedCol];
-            for(int i = 0; i < a.colNames.length; i++ ){
-                for(int j = 0; j < a.colNames.length; i++ ){
-                    if (joinedColNames[i].equals(a.colNames[j])){
+
+            for (int i = 0; i < a.colNames.length; i++) {
+                for (int j = 0; j < a.colNames.length; i++) {
+                    if (joinedColNames[i].equals(a.colNames[j])) {
                         joinedColTypes[i] = a.colTypes[j];
                     }
                 }
             }
-            for(int i = a.colNames.length; i < numOfJoinedCol; i++ ){
-                for(int j = 0; j < b.colNames.length; i++ ){
-                    if (joinedColNames[i].equals(a.colNames[j])){
+            for (int i = a.colNames.length; i < numOfJoinedCol; i++) {
+                for (int j = 0; j < b.colNames.length; i++) {
+                    if (joinedColNames[i].equals(a.colNames[j])) {
                         joinedColTypes[i] = b.colTypes[j];
                     }
 
                 }
             }
+            //Two rows should be merged if and only if all of their shared columns have the same values.
 
+            for(int i = 0; i < commonColumnNames.length; i ++){
+                for(int j = 0; j < a.colNames.length; j++){
+                    if (commonColumnNames[i].equals(a.colNames[j])) {
+                        aCommonColNamesIndex.add(j);
+                    }
+                }
+            }
+
+            for(int i = 0; i < commonColumnNames.length; i ++){
+                for(int j = 0; j < b.colNames.length; j++){
+                    if (commonColumnNames[i].equals(b.colNames[j])) {
+                        bCommonColNamesIndex.add(j);
+                    }
+                }
+            }
+
+            for(int i = 0; i < numOfRow; i++){
+
+            }
+
+
+        }return  null;
     }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
     //Combine two arrays
-    public String[] concat(String[] a, String[] b)
-    {
-        String[] c= new String[a.length + b.length];
+    public String[] concat(String[] a, String[] b) {
+        String[] c = new String[a.length + b.length];
         System.arraycopy(a, 0, c, 0, a.length);
         System.arraycopy(b, 0, c, a.length, b.length);
         return c;
     }
 
-
-    public  boolean hasCommonColumnNames (Table a, Table b) {
+    public boolean hasCommonColumnNames(Table a, Table b) {
         String[] aColNames = a.colNames;
         String[] bColNames = b.colNames;
         for (int i = 0; i < aColNames.length; i++) {
@@ -172,15 +194,16 @@ public class Table {
     }
 
 
-
-
-    /** Gets all column names that are common to both tables. */
-    public static String[] getCommonColumnNames(Table a, Table b){
-        String [] aColNames = a.colNames;
-        String [] bColNames = b.colNames;
+    /**
+     * Gets all column names that are common to both tables.
+     */
+    public static String[] getCommonColumnNames(Table a, Table b) {
+        String[] aColNames = a.colNames;
+        String[] bColNames = b.colNames;
         ArrayList<String> commonColumnNames = new ArrayList<>();
-        for(int i = 0; i < aColNames.length; i++){
-            for(int j = 0; j < bColNames.length; j++){
+
+        for (int i = 0; i < aColNames.length; i++) {
+            for (int j = 0; j < bColNames.length; j++) {
                 if (aColNames[i].equals(bColNames[j])) {
                     commonColumnNames.add(aColNames[i]);
                 }
@@ -189,6 +212,7 @@ public class Table {
         String[] commonColumnNamesInString = commonColumnNames.toArray((new String[0]));
         return commonColumnNamesInString;
     }
+}
 
     //Converting ArrayList to Array:
     //List<String> list = ..;
@@ -250,7 +274,7 @@ public class Table {
 
 
 
-}
+
 
 
 //        T1

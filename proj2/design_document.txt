@@ -73,7 +73,7 @@ Methods:
 
     /** Returns true if the two columns have the same type using the
       * columnTypes variable in the table. */
-    public boolean isTheSameType()
+    public boolean isTheSameType(Table t1)
 
 class Condition:
 

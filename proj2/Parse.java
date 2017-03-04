@@ -3,6 +3,17 @@ import java.util.regex.Matcher;
 
 import java.util.StringJoiner;
 
+/**
+ * Parse.java provides examples of how one can process the inputs from the user. This class is capable of parsing
+ * the commands your database should accept and displaying a brief summary of the command. Try it out and see
+ * what happens, but be aware that it is not industrial strength. It will check the general form of commands to
+ * detect malformed queries, but it is still possible to create malformed commands that it accepts. How you handle
+ * malformed commands such as these in your own implementation is up to you, but we recommend you do it somewhere
+ * other than your parser, as detecting some errors at such a high level is quite complicated. Feel free to
+ * take whatever code you would like from this class to parse commands passed to your database's transact command.
+ * You should not be directly calling any methods from Parse in your project, but instead using its logic as a reference.
+ */
+
 public class Parse {
     // Various common constructs, simplifies parsing.
     private static final String REST  = "\\s*(.*)\\s*",
