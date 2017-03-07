@@ -4,7 +4,7 @@ import org.junit.Test;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.StringJoiner;
+import java.util.HashMap;
 
 
 /**
@@ -43,10 +43,10 @@ public class Table {
     public final String[] colNames;
     public final String[] colTypes;
     public int numOfRow;
-    public String[][] tableData;
+    public HashMap tableData;
 
 
-    public Table(String[] colNames, String[] colTypes, String[][] rowCol) {
+    public Table(String[] colNames, String[] colTypes, HashMap rowCol) {
         this.numOfCol = rowCol[0].length;
         this.numOfRow = rowCol.length;
         this.colNames = colNames;
@@ -82,95 +82,7 @@ public class Table {
     /**
      * Returns the join of Table a and Table b.
      */
-    public Table join(Table a, Table b) {
-        String[] joinedColNames;
-        String[] joinedColTypes;
-        int numOfJoinedRow;
-        int numOfJoinedCol;
-        String[][] joinedtableData;
-        String[] commonColumnNames;
-        ArrayList<Integer> aCommonColNamesIndex = new ArrayList<>();
-        ArrayList<Integer> bCommonColNamesIndex = new ArrayList<>();
 
-
-
-        //In the case that the input tables have no columns in common, the resulting table is what is called the
-        //Cartesian Product of the tables. That is, each row of table A is considered to match each row of table B
-        //as if they had a column in common.
-
-        if (!hasCommonColumnNames(a, b)) {
-            joinedColNames = concat(a.colNames, b.colNames);
-            joinedColTypes = concat(a.colTypes, b.colTypes);
-            numOfJoinedRow = a.numOfRow + b.numOfRow - 1;
-            numOfJoinedCol = a.numOfCol + b.numOfCol;
-            joinedtableData = new String[numOfJoinedRow][numOfJoinedCol];
-            Table cartesianProduct = new Table(joinedColNames, joinedColTypes, joinedtableData);
-            return cartesianProduct;
-        } else {
-
-            commonColumnNames = getCommonColumnNames(a, b);
-            joinedColNames = new String[]{};
-            for (int i = 0; i < commonColumnNames.length; i++) {
-                joinedColNames[i] = commonColumnNames[i];
-            }
-            for (int i = 0; i < a.colNames.length; i++) {
-                for (int j = 0; j < commonColumnNames.length; j++) {
-                    if (a.colNames[i] != joinedColNames[j]) {
-                        joinedColNames[commonColumnNames.length - 1 + i] = a.colNames[i];
-                    }
-                }
-            }
-            for (int i = 0; i < b.colNames.length; i++) {
-                for (int j = 0; j < commonColumnNames.length; j++) {
-                    if (b.colNames[i] != joinedColNames[j]) {
-                        joinedColNames[a.numOfCol - 1 + i] = b.colNames[i];
-                    }
-                }
-            }
-
-            numOfJoinedCol = joinedColNames.length;
-            joinedColTypes = new String[numOfJoinedCol];
-
-            for (int i = 0; i < a.colNames.length; i++) {
-                for (int j = 0; j < a.colNames.length; i++) {
-                    if (joinedColNames[i].equals(a.colNames[j])) {
-                        joinedColTypes[i] = a.colTypes[j];
-                    }
-                }
-            }
-            for (int i = a.colNames.length; i < numOfJoinedCol; i++) {
-                for (int j = 0; j < b.colNames.length; i++) {
-                    if (joinedColNames[i].equals(a.colNames[j])) {
-                        joinedColTypes[i] = b.colTypes[j];
-                    }
-
-                }
-            }
-            //Two rows should be merged if and only if all of their shared columns have the same values.
-
-            for(int i = 0; i < commonColumnNames.length; i ++){
-                for(int j = 0; j < a.colNames.length; j++){
-                    if (commonColumnNames[i].equals(a.colNames[j])) {
-                        aCommonColNamesIndex.add(j);
-                    }
-                }
-            }
-
-            for(int i = 0; i < commonColumnNames.length; i ++){
-                for(int j = 0; j < b.colNames.length; j++){
-                    if (commonColumnNames[i].equals(b.colNames[j])) {
-                        bCommonColNamesIndex.add(j);
-                    }
-                }
-            }
-
-            for(int i = 0; i < numOfRow; i++){
-
-            }
-
-
-        }return  null;
-    }
 
     //Combine two arrays
     public String[] concat(String[] a, String[] b) {
@@ -314,3 +226,93 @@ public class Table {
 //    }
 
 //}
+
+//    public Table join(Table a, Table b) {
+//        String[] joinedColNames;
+//        String[] joinedColTypes;
+//        int numOfJoinedRow;
+//        int numOfJoinedCol;
+//        String[][] joinedtableData;
+//        String[] commonColumnNames;
+//        ArrayList<Integer> aCommonColNamesIndex = new ArrayList<>();
+//        ArrayList<Integer> bCommonColNamesIndex = new ArrayList<>();
+//
+//
+//
+//        //In the case that the input tables have no columns in common, the resulting table is what is called the
+//        //Cartesian Product of the tables. That is, each row of table A is considered to match each row of table B
+//        //as if they had a column in common.
+//
+//        if (!hasCommonColumnNames(a, b)) {
+//            joinedColNames = concat(a.colNames, b.colNames);
+//            joinedColTypes = concat(a.colTypes, b.colTypes);
+//            numOfJoinedRow = a.numOfRow + b.numOfRow - 1;
+//            numOfJoinedCol = a.numOfCol + b.numOfCol;
+//            joinedtableData = new String[numOfJoinedRow][numOfJoinedCol];
+//            Table cartesianProduct = new Table(joinedColNames, joinedColTypes, joinedtableData);
+//            return cartesianProduct;
+//        } else {
+//
+//            commonColumnNames = getCommonColumnNames(a, b);
+//            joinedColNames = new String[]{};
+//            for (int i = 0; i < commonColumnNames.length; i++) {
+//                joinedColNames[i] = commonColumnNames[i];
+//            }
+//            for (int i = 0; i < a.colNames.length; i++) {
+//                for (int j = 0; j < commonColumnNames.length; j++) {
+//                    if (a.colNames[i] != joinedColNames[j]) {
+//                        joinedColNames[commonColumnNames.length - 1 + i] = a.colNames[i];
+//                    }
+//                }
+//            }
+//            for (int i = 0; i < b.colNames.length; i++) {
+//                for (int j = 0; j < commonColumnNames.length; j++) {
+//                    if (b.colNames[i] != joinedColNames[j]) {
+//                        joinedColNames[a.numOfCol - 1 + i] = b.colNames[i];
+//                    }
+//                }
+//            }
+//
+//            numOfJoinedCol = joinedColNames.length;
+//            joinedColTypes = new String[numOfJoinedCol];
+//
+//            for (int i = 0; i < a.colNames.length; i++) {
+//                for (int j = 0; j < a.colNames.length; i++) {
+//                    if (joinedColNames[i].equals(a.colNames[j])) {
+//                        joinedColTypes[i] = a.colTypes[j];
+//                    }
+//                }
+//            }
+//            for (int i = a.colNames.length; i < numOfJoinedCol; i++) {
+//                for (int j = 0; j < b.colNames.length; i++) {
+//                    if (joinedColNames[i].equals(a.colNames[j])) {
+//                        joinedColTypes[i] = b.colTypes[j];
+//                    }
+//
+//                }
+//            }
+//            //Two rows should be merged if and only if all of their shared columns have the same values.
+//
+//            for(int i = 0; i < commonColumnNames.length; i ++){
+//                for(int j = 0; j < a.colNames.length; j++){
+//                    if (commonColumnNames[i].equals(a.colNames[j])) {
+//                        aCommonColNamesIndex.add(j);
+//                    }
+//                }
+//            }
+//
+//            for(int i = 0; i < commonColumnNames.length; i ++){
+//                for(int j = 0; j < b.colNames.length; j++){
+//                    if (commonColumnNames[i].equals(b.colNames[j])) {
+//                        bCommonColNamesIndex.add(j);
+//                    }
+//                }
+//            }
+//
+//            for(int i = 0; i < numOfRow; i++){
+//
+//            }
+//
+//
+//        }return  null;
+//    }
