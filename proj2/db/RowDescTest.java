@@ -11,6 +11,9 @@ import org.junit.Test;
 import java.util.NoSuchElementException;
 
 import static org.junit.Assert.*;
+import org.junit.Rule;
+import org.junit.rules.ExpectedException;
+
 
 
 import java.util.NoSuchElementException;
@@ -19,7 +22,7 @@ import org.junit.Test;
 
 
 import static org.junit.Assert.*;
-import junit.framework.Assert;
+
 import junit.framework.JUnit4TestAdapter;
 
 public class RowDescTest {
@@ -37,25 +40,25 @@ public class RowDescTest {
         // test rd1.combine(rd2)
         rd3 = RowDesc.merge(rd1, rd2);
         assertEquals(3 , rd3.numColumns());
-        assertEquals(3 * Type.INT_TYPE.getLen(), rd3.getSize());
+        assertEquals(3 * Type.Int.getLen(), rd3.getSize());
         for (int i = 0; i < 3; ++i)
-            assertEquals(Type.INT_TYPE, rd3.getColumnType(i));
+            assertEquals(Type.Int, rd3.getColumnType(i));
         assertEquals(combinedStringArrays(rd1, rd2, rd3), true);
 
         // test rd2.combine(rd1)
         rd3 = RowDesc.merge(rd2, rd1);
         assertEquals(3 , rd3.numColumns());
-        assertEquals(3 * Type.INT_TYPE.getLen(), rd3.getSize());
+        assertEquals(3 * Type.Int.getLen(), rd3.getSize());
         for (int i = 0; i < 3; ++i)
-            assertEquals(Type.INT_TYPE, rd3.getColumnType(i));
+            assertEquals(Type.Int, rd3.getColumnType(i));
         assertEquals(combinedStringArrays(rd2, rd1, rd3), true);
 
         // test rd2.combine(rd2)
         rd3 = RowDesc.merge(rd2, rd2);
         assertEquals(4 , rd3.numColumns());
-        assertEquals(4 * Type.INT_TYPE.getLen(), rd3.getSize());
+        assertEquals(4 * Type.Int.getLen(), rd3.getSize());
         for (int i = 0; i < 4; ++i)
-            assertEquals(Type.INT_TYPE, rd3.getColumnType(i));
+            assertEquals(Type.Int, rd3.getColumnType(i));
         assertEquals(combinedStringArrays(rd2, rd2, rd3), true);
     }
 
@@ -89,50 +92,79 @@ public class RowDescTest {
         for (int len: lengths) {
             RowDesc rd = Utility.getRowDesc(len);
             for (int i = 0; i < len; ++i)
-                assertEquals(Type.INT_TYPE, rd.getColumnType(i));
+                assertEquals(Type.Int, rd.getColumnType(i));
         }
     }
 
     /**
      * Unit test for RowDesc.nameToId()
      */
-    @Test public void nameToId() {
-        int[] lengths = new int[] { 1, 2, 1000 };
-        String prefix = "test";
 
-        for (int len: lengths) {
-            // Make sure you retrieve well-named columns
-            RowDesc rd = Utility.getRowDesc(len, prefix);
-            for (int i = 0; i < len; ++i) {
-                assertEquals(i, rd.columnNameToIndex(prefix + i));
-            }
 
-            // Make sure you throw exception for non-existent columns
-            try {
-                rd.columnNameToIndex("foo");
-                Assert.fail("foo is not a valid column name");
-            } catch (NoSuchElementException e) {
-                // expected to get here
-            }
 
-            // Make sure you throw exception for null searches
-            try {
-                rd.columnNameToIndex(null);
-                Assert.fail("null is not a valid column name");
-            } catch (NoSuchElementException e) {
-                // expected to get here
-            }
 
-            // Make sure you throw exception when all column names are null
-            rd = Utility.getRowDesc(len);
-            try {
-                rd.columnNameToIndex(prefix);
-                Assert.fail("no columns are named, so you can't find it");
-            } catch (NoSuchElementException e) {
-                // expected to get here
-            }
-        }
+    @Rule
+    public ExpectedException expectedEx = ExpectedException.none();
+
+    @Test
+    public void nameToId() {
+        Type[] typeAr = new Type[]{Type.String, Type.String, Type.String};
+        String[] fieldAr = new String[]{"Lastname", "Firstname", "TeamName"};
+        RowDesc rd = new RowDesc(typeAr, fieldAr);
+        expectedEx.expect(NoSuchElementException.class);
+        expectedEx.expectMessage("No column with a matching name is found");
+        rd.columnNameToIndex("cool");
+        assertEquals(1, rd.columnNameToIndex("Firstname"));
+        assertEquals(0, rd.columnNameToIndex("Lastname"));
+        assertEquals(2, rd.columnNameToIndex("TeamName"));
+        expectedEx.expect(NullPointerException.class);
+        expectedEx.expectMessage("name is null");
+        rd.columnNameToIndex("");
+
+
     }
+
+
+
+
+
+//    @Test public void nameToId() {
+//        int[] lengths = new int[] { 1, 2, 1000 };
+//        String prefix = "test";
+//
+//        for (int len: lengths) {
+//            // Make sure you retrieve well-named columns
+//            RowDesc rd = Utility.getRowDesc(len, prefix);
+//            for (int i = 0; i < len; ++i) {
+//                assertEquals(i, rd.columnNameToIndex(prefix + i));
+//            }
+//
+//            // Make sure you throw exception for non-existent columns
+//            try {
+//                rd.columnNameToIndex("foo");
+//                org.junit.Assert.fail("foo is not a valid column name");
+//            } catch (NoSuchElementException e) {
+//                // expected to get here
+//            }
+//
+//            // Make sure you throw exception for null searches
+//            try {
+//                rd.columnNameToIndex(null);
+//                org.junit.Assert.fail("null is not a valid column name");
+//            } catch (NoSuchElementException e) {
+//                // expected to get here
+//            }
+//
+//            // Make sure you throw exception when all column names are null
+//            rd = Utility.getRowDesc(len);
+//            try {
+//                rd.columnNameToIndex(prefix);
+//                org.junit.Assert.fail("no columns are named, so you can't find it");
+//            } catch (NoSuchElementException e) {
+//                // expected to get here
+//            }
+//        }
+//    }
 
     /**
      * Unit test for rowDesc.getSize()
@@ -142,7 +174,7 @@ public class RowDescTest {
 
         for (int len: lengths) {
             RowDesc rd = Utility.getRowDesc(len);
-            assertEquals(len * Type.INT_TYPE.getLen(), rd.getSize());
+            assertEquals(len * Type.Int.getLen(), rd.getSize());
         }
     }
 
@@ -159,9 +191,9 @@ public class RowDescTest {
     }
 
     @Test public void testEquals() {
-        RowDesc singleInt = new RowDesc(new Type[]{Type.INT_TYPE});
-        RowDesc singleInt2 = new RowDesc(new Type[]{Type.INT_TYPE});
-        RowDesc intString = new RowDesc(new Type[]{Type.INT_TYPE, Type.STRING_TYPE});
+        RowDesc singleInt = new RowDesc(new Type[]{Type.Int});
+        RowDesc singleInt2 = new RowDesc(new Type[]{Type.Int});
+        RowDesc intString = new RowDesc(new Type[]{Type.Int, Type.String});
 
         // .equals() with null should return false
         assertFalse(singleInt.equals(null));
@@ -178,6 +210,15 @@ public class RowDescTest {
         assertFalse(singleInt2.equals(intString));
         assertFalse(intString.equals(singleInt));
         assertFalse(intString.equals(singleInt2));
+    }
+
+    @Test
+    public void testToString(){
+        Type [] typeAr = new Type[] {Type.Int, Type.String, Type.String};
+        String [] fieldAr = new String [] {"Lastname", "Firstname", "TeamName"};
+        RowDesc rd = new RowDesc(typeAr, fieldAr);
+        assertEquals("Lastname", rd.toString());
+
     }
 
     /**

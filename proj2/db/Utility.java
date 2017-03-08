@@ -22,7 +22,7 @@ public class Utility {
     public static Type[] getTypes(int len) {
         Type[] types = new Type[len];
         for (int i = 0; i < len; ++i)
-            types[i] = Type.INT_TYPE;
+            types[i] = Type.Int;
         return types;
     }
 

@@ -81,7 +81,7 @@ public class IntColumn implements Column {
      * @return Type.INT_TYPE
      */
     public Type getType() {
-        return Type.INT_TYPE;
+        return Type.Int;
     }
 }
 

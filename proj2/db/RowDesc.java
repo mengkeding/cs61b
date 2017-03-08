@@ -164,19 +164,21 @@ public class RowDesc implements Serializable {
      * @throws NoSuchElementException
      *             if no column with a matching name is found.
      */
-    public int columnNameToIndex(String name){
+    public int columnNameToIndex(String name) {
         // some code goes here
-        if (name == null){
+        if (name == null) {
             throw new NullPointerException("name is null");
         }
 
-        for(int i = 0; i < rdItemList.size(); i++){
-            if(rdItemList.get(i).columnName.equals(name)){
+        for (int i = 0; i < rdItemList.size(); i++) {
+            if (rdItemList.get(i).columnName.equals(name)) {
                 return i;
             }
         }
-        throw new NoSuchElementException();
+
+        throw new NoSuchElementException("No column with a matching name is found");
     }
+
 
     /**
      * @return The size (in bytes) of rows corresponding to this RowDesc.
@@ -186,10 +188,10 @@ public class RowDesc implements Serializable {
         // some code goes here
         int sizeInBytes = 0;
         for(int i = 0; i < rdItemList.size(); i++){
-            if (rdItemList.get(i).columnType == Type.INT_TYPE){
-                sizeInBytes += Type.INT_TYPE.getLen();
+            if (rdItemList.get(i).columnType == Type.Int){
+                sizeInBytes += Type.Int.getLen();
             }else {
-                sizeInBytes += Type.STRING_TYPE.getLen();
+                sizeInBytes += Type.String.getLen();
             }
         }
         return sizeInBytes;
@@ -229,13 +231,24 @@ public class RowDesc implements Serializable {
      *            the Object to be compared for equality with this RowDesc.
      * @return true if the object is equal to this RowDesc.
      */
+
+
+    // .equals() with the wrong type should return false
+    //assertFalse(singleInt.equals(new Object()));
     public boolean equals(Object o) {
         // some code goes here
         boolean isEquals = false;
+        if(o == null){
+            return false;
+        }
+        if (!(o instanceof RowDesc)) {
+            return false;
+        }
         RowDesc r = (RowDesc) o;
         for(int i = 0; i < numColumns(); i++) {
-            if (getSize() == r.getSize() && getColumnType(i).equals(r.getColumnType(i))) ;
-            isEquals = true;
+            if (getSize() == r.getSize() && getColumnType(i).equals(r.getColumnType(i))) {
+                isEquals = true;
+            }
         }
         return isEquals;
     }
@@ -244,6 +257,8 @@ public class RowDesc implements Serializable {
     public int hashCode() {
         // If you want to use RowDesc as keys for HashMap, implement this so
         // that equal objects have equals hashCode() results
+
+
         throw new UnsupportedOperationException("unimplemented");
     }
 
@@ -252,10 +267,17 @@ public class RowDesc implements Serializable {
      * "fieldType[0](fieldName[0]), ..., fieldType[M](fieldName[M])", although
      * the exact format does not matter.
      *
+     * I'd like it as:
+     * Lastname string,Firstname string,TeamName string
      * @return String describing this descriptor.
      */
     public String toString() {
         // some code goes here
-        return "";
+        String string = null;
+        for (int i = 0; i < rdItemList.size() - 1; i++){
+            string = rdItemList.get(i).columnType + " "+ rdItemList.get(i).columnName + ",";
+        }
+        string += rdItemList.get(rdItemList.size() - 1).columnType + rdItemList.get(rdItemList.size() - 1).columnName;
+        return string;
     }
 }

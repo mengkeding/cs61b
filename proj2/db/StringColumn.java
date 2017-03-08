@@ -114,7 +114,7 @@ import java.io.IOException;
          */
         public Type getType() {
 
-            return Type.STRING_TYPE;
+            return Type.String;
         }
     }
 
