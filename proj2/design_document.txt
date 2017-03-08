@@ -55,12 +55,14 @@ Methods:
   /** Adds a new column to the data. */
   public void addColumn(String columnName, String columnType, String[] columnData)
 
+
+
 class Operation<T>:
 
 Instance variables:
 	int column1;
 	int column2;
-    String comparisonSymbol;
+  String comparisonSymbol;
 
 Constructor:
     /** Looks up column numbers of columns and stores them in column1 and
@@ -74,6 +76,8 @@ Methods:
     /** Returns true if the two columns have the same type using the
       * columnTypes variable in the table. */
     public boolean isTheSameType(Table t1)
+
+
 
 class Condition:
 
