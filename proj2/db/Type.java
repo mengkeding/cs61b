@@ -9,7 +9,10 @@ import java.io.*;
  * constructor is private.
  */
 public enum Type implements Serializable {
-    Int() {
+
+
+
+    INT("int") {
         @Override
         public int getLen() {
             return 4;
@@ -24,7 +27,7 @@ public enum Type implements Serializable {
             }
         }
 
-    }, String() {
+    }, STRING("string") {
         @Override
         public int getLen() {
             return STRING_LEN+4;
@@ -43,6 +46,12 @@ public enum Type implements Serializable {
             }
         }
     };
+
+    public final String type;
+
+    Type(String type){
+        this.type = type;
+    }
 
     public static final int STRING_LEN = 128;
 
