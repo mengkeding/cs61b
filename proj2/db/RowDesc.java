@@ -12,7 +12,7 @@ import java.util.NoSuchElementException;
  * RowDesc describes the schema of a row.
  */
 public class RowDesc implements Serializable {
-    private List<RDItem> rdItemList = new ArrayList<>();
+    public List<RDItem> rdItemList = new ArrayList<>();
 
 
     /**
@@ -188,10 +188,10 @@ public class RowDesc implements Serializable {
         // some code goes here
         int sizeInBytes = 0;
         for(int i = 0; i < rdItemList.size(); i++){
-            if (rdItemList.get(i).columnType == Type.Int){
-                sizeInBytes += Type.Int.getLen();
+            if (rdItemList.get(i).columnType == Type.INT){
+                sizeInBytes += Type.INT.getLen();
             }else {
-                sizeInBytes += Type.String.getLen();
+                sizeInBytes += Type.STRING.getLen();
             }
         }
         return sizeInBytes;
@@ -277,22 +277,14 @@ public class RowDesc implements Serializable {
         for (int i = 0; i < rdItemList.size() - 1; i++) {
             sb.append(rdItemList.get(i).columnName);
             sb.append(" ");
-            sb.append(rdItemList.get(i).columnType);
+            sb.append(rdItemList.get(i).columnType.type);
             sb.append(",");
         }
         sb.append(rdItemList.get(rdItemList.size() - 1).columnName);
         sb.append(" ");
-        sb.append(rdItemList.get(rdItemList.size() - 1).columnType);
+        sb.append(rdItemList.get(rdItemList.size() - 1).columnType.type);
         return sb.toString();
     }
 }
 
-
-//    https://segmentfault.com/a/1190000002683782
-
-//    使用 String 类的场景：在字符串不经常变化的场景中可以使用 String 类，例如常量的声明、少量的变量运算。
-//
-//    使用 StringBuffer 类的场景：在频繁进行字符串运算（如拼接、替换、删除等），并且运行在多线程环境中，则可以考虑使用 StringBuffer，例如 XML 解析、HTTP 参数解析和封装。
-//
-//    使用 StringBuilder 类的场景：在频繁进行字符串运算（如拼接、替换、和删除等），并且运行在单线程的环境中，则可以考虑使用 StringBuilder，如 SQL 语句的拼装、JSON 封装等。
 
