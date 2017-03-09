@@ -40,32 +40,32 @@ public class RowDescTest {
         // test rd1.combine(rd2)
         rd3 = RowDesc.merge(rd1, rd2);
         assertEquals(3 , rd3.numColumns());
-        assertEquals(3 * Type.Int.getLen(), rd3.getSize());
+        assertEquals(3 * Type.INT.getLen(), rd3.getSize());
         for (int i = 0; i < 3; ++i)
-            assertEquals(Type.Int, rd3.getColumnType(i));
-        assertEquals(combinedStringArrays(rd1, rd2, rd3), true);
+            assertEquals(Type.INT, rd3.getColumnType(i));
+        assertEquals(combinedSTRINGArrays(rd1, rd2, rd3), true);
 
         // test rd2.combine(rd1)
         rd3 = RowDesc.merge(rd2, rd1);
         assertEquals(3 , rd3.numColumns());
-        assertEquals(3 * Type.Int.getLen(), rd3.getSize());
+        assertEquals(3 * Type.INT.getLen(), rd3.getSize());
         for (int i = 0; i < 3; ++i)
-            assertEquals(Type.Int, rd3.getColumnType(i));
-        assertEquals(combinedStringArrays(rd2, rd1, rd3), true);
+            assertEquals(Type.INT, rd3.getColumnType(i));
+        assertEquals(combinedSTRINGArrays(rd2, rd1, rd3), true);
 
         // test rd2.combine(rd2)
         rd3 = RowDesc.merge(rd2, rd2);
         assertEquals(4 , rd3.numColumns());
-        assertEquals(4 * Type.Int.getLen(), rd3.getSize());
+        assertEquals(4 * Type.INT.getLen(), rd3.getSize());
         for (int i = 0; i < 4; ++i)
-            assertEquals(Type.Int, rd3.getColumnType(i));
-        assertEquals(combinedStringArrays(rd2, rd2, rd3), true);
+            assertEquals(Type.INT, rd3.getColumnType(i));
+        assertEquals(combinedSTRINGArrays(rd2, rd2, rd3), true);
     }
 
     /**
      * Ensures that combined's column names = rd1's column names + rd2's column names
      */
-    private boolean combinedStringArrays(RowDesc rd1, RowDesc rd2, RowDesc combined) {
+    private boolean combinedSTRINGArrays(RowDesc rd1, RowDesc rd2, RowDesc combined) {
         for (int i = 0; i < rd1.numColumns(); i++) {
             if (!(((rd1.getColumnName(i) == null) && (combined.getColumnName(i) == null)) ||
                     rd1.getColumnName(i).equals(combined.getColumnName(i)))) {
@@ -92,7 +92,7 @@ public class RowDescTest {
         for (int len: lengths) {
             RowDesc rd = Utility.getRowDesc(len);
             for (int i = 0; i < len; ++i)
-                assertEquals(Type.Int, rd.getColumnType(i));
+                assertEquals(Type.INT, rd.getColumnType(i));
         }
     }
 
@@ -108,7 +108,7 @@ public class RowDescTest {
 
     @Test
     public void nameToId() {
-        Type[] typeAr = new Type[]{Type.String, Type.String, Type.String};
+        Type[] typeAr = new Type[]{Type.STRING, Type.STRING, Type.STRING};
         String[] fieldAr = new String[]{"Lastname", "Firstname", "TeamName"};
         RowDesc rd = new RowDesc(typeAr, fieldAr);
         expectedEx.expect(NoSuchElementException.class);
@@ -129,13 +129,13 @@ public class RowDescTest {
 
 
 //    @Test public void nameToId() {
-//        int[] lengths = new int[] { 1, 2, 1000 };
-//        String prefix = "test";
+//        INT[] lengths = new INT[] { 1, 2, 1000 };
+//        STRING prefix = "test";
 //
-//        for (int len: lengths) {
+//        for (INT len: lengths) {
 //            // Make sure you retrieve well-named columns
 //            RowDesc rd = Utility.getRowDesc(len, prefix);
-//            for (int i = 0; i < len; ++i) {
+//            for (INT i = 0; i < len; ++i) {
 //                assertEquals(i, rd.columnNameToIndex(prefix + i));
 //            }
 //
@@ -174,7 +174,7 @@ public class RowDescTest {
 
         for (int len: lengths) {
             RowDesc rd = Utility.getRowDesc(len);
-            assertEquals(len * Type.Int.getLen(), rd.getSize());
+            assertEquals(len * Type.INT.getLen(), rd.getSize());
         }
     }
 
@@ -191,33 +191,33 @@ public class RowDescTest {
     }
 
     @Test public void testEquals() {
-        RowDesc singleInt = new RowDesc(new Type[]{Type.Int});
-        RowDesc singleInt2 = new RowDesc(new Type[]{Type.Int});
-        RowDesc intString = new RowDesc(new Type[]{Type.Int, Type.String});
+        RowDesc singleINT = new RowDesc(new Type[]{Type.INT});
+        RowDesc singleINT2 = new RowDesc(new Type[]{Type.INT});
+        RowDesc INTSTRING = new RowDesc(new Type[]{Type.INT, Type.STRING});
 
         // .equals() with null should return false
-        assertFalse(singleInt.equals(null));
+        assertFalse(singleINT.equals(null));
 
         // .equals() with the wrong type should return false
-        assertFalse(singleInt.equals(new Object()));
+        assertFalse(singleINT.equals(new Object()));
 
-        assertTrue(singleInt.equals(singleInt));
-        assertTrue(singleInt.equals(singleInt2));
-        assertTrue(singleInt2.equals(singleInt));
-        assertTrue(intString.equals(intString));
+        assertTrue(singleINT.equals(singleINT));
+        assertTrue(singleINT.equals(singleINT2));
+        assertTrue(singleINT2.equals(singleINT));
+        assertTrue(INTSTRING.equals(INTSTRING));
 
-        assertFalse(singleInt.equals(intString));
-        assertFalse(singleInt2.equals(intString));
-        assertFalse(intString.equals(singleInt));
-        assertFalse(intString.equals(singleInt2));
+        assertFalse(singleINT.equals(INTSTRING));
+        assertFalse(singleINT2.equals(INTSTRING));
+        assertFalse(INTSTRING.equals(singleINT));
+        assertFalse(INTSTRING.equals(singleINT2));
     }
 
     @Test
-    public void testToString(){
-        Type [] typeAr = new Type[] {Type.String, Type.String, Type.String};
+    public void testToSTRING(){
+        Type [] typeAr = new Type[] {Type.STRING, Type.STRING, Type.STRING};
         String [] fieldAr = new String [] {"Lastname", "Firstname", "TeamName"};
         RowDesc rd = new RowDesc(typeAr, fieldAr);
-        assertEquals("Lastname String,Firstname String,TeamName String", rd.toString());
+        assertEquals("Lastname string,Firstname string,TeamName string", rd.toString());
 
     }
 
