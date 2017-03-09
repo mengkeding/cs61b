@@ -1,8 +1,5 @@
 package db;
 
-/**
- * Created by wucaiwei on 2017/3/9.
- */
 
 import java.io.Serializable;
 
@@ -39,5 +36,4 @@ public interface PageId {
 
     public int pageNumber();
 }
-
 
