@@ -214,10 +214,10 @@ public class RowDescTest {
 
     @Test
     public void testToString(){
-        Type [] typeAr = new Type[] {Type.Int, Type.String, Type.String};
+        Type [] typeAr = new Type[] {Type.String, Type.String, Type.String};
         String [] fieldAr = new String [] {"Lastname", "Firstname", "TeamName"};
         RowDesc rd = new RowDesc(typeAr, fieldAr);
-        assertEquals("Lastname", rd.toString());
+        assertEquals("Lastname String,Firstname String,TeamName String", rd.toString());
 
     }
 
