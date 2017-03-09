@@ -23,21 +23,21 @@ public interface Column extends Serializable{
      * @param value The value to compare this column to
      * @return Whether or not the comparison yields true.
      */
-    public boolean compare(Predicate.Op op, Column value);
+    boolean compare(Predicate.Op op, Column value);
 
     /**
-     * Returns the type of this column (see {@link Type#INT_TYPE} or {@link Type#STRING_TYPE}
+     * Returns the type of this column (see {@link Type#INT} or {@link Type#STRING}
      * @return type of this column
      */
-    public Type getType();
+    Type getType();
 
     /**
      * Hash code.
      * Different column objects representing the same value should probably
      * return the same hashCode.
      */
-    public int hashCode();
-    public boolean equals(Object column);
+    int hashCode();
+    boolean equals(Object column);
 
-    public String toString();
+    String toString();
 }
