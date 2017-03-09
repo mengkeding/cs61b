@@ -273,11 +273,26 @@ public class RowDesc implements Serializable {
      */
     public String toString() {
         // some code goes here
-        String string = null;
-        for (int i = 0; i < rdItemList.size() - 1; i++){
-            string = rdItemList.get(i).columnType + " "+ rdItemList.get(i).columnName + ",";
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < rdItemList.size() - 1; i++) {
+            sb.append(rdItemList.get(i).columnName);
+            sb.append(" ");
+            sb.append(rdItemList.get(i).columnType);
+            sb.append(",");
         }
-        string += rdItemList.get(rdItemList.size() - 1).columnType + rdItemList.get(rdItemList.size() - 1).columnName;
-        return string;
+        sb.append(rdItemList.get(rdItemList.size() - 1).columnName);
+        sb.append(" ");
+        sb.append(rdItemList.get(rdItemList.size() - 1).columnType);
+        return sb.toString();
     }
 }
+
+
+//    https://segmentfault.com/a/1190000002683782
+
+//    使用 String 类的场景：在字符串不经常变化的场景中可以使用 String 类，例如常量的声明、少量的变量运算。
+//
+//    使用 StringBuffer 类的场景：在频繁进行字符串运算（如拼接、替换、删除等），并且运行在多线程环境中，则可以考虑使用 StringBuffer，例如 XML 解析、HTTP 参数解析和封装。
+//
+//    使用 StringBuilder 类的场景：在频繁进行字符串运算（如拼接、替换、和删除等），并且运行在单线程的环境中，则可以考虑使用 StringBuilder，如 SQL 语句的拼装、JSON 封装等。
+
