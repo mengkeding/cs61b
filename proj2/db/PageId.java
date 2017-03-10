@@ -12,6 +12,7 @@ public interface PageId {
      This class MUST have a constructor that accepts n integer parameters,
      where n is the number of integers returned in the array from serialize.
      */
+
     public int[] serialize();
 
     /** @return the unique tableid hashcode with this PageId */
