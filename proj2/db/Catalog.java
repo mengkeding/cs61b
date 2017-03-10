@@ -39,8 +39,7 @@ public class Catalog {
 
 
     private HashMap<String,Table> nameHash;
-    private HashMap<Integer,Table> iDHash;
-
+    private HashMap<Integer,Table> idHash;
 
 
 
@@ -67,7 +66,7 @@ public class Catalog {
     public Catalog() {
         // some code goes here
         this.nameHash = new HashMap<>();
-        this.iDHash = new HashMap<>();
+        this.idHash = new HashMap<>();
     }
 
     /**
@@ -83,7 +82,7 @@ public class Catalog {
         // some code goes here
         Table t = new Table(name, pkeyField, file);
         nameHash.put(name,t);
-        iDHash.put(file.getId(),t);
+        idHash.put(file.getId(),t);
     }
 
     public void addTable(DbFile file, String name) {
@@ -124,7 +123,7 @@ public class Catalog {
      */
     public RowDesc getRowDesc(int tableid) throws NoSuchElementException {
         // some code goes here
-        Table tableToGetRowDesc = iDHash.get(tableid);
+        Table tableToGetRowDesc = idHash.get(tableid);
         if(tableToGetRowDesc == null){
             throw new NoSuchElementException("the table doesn't exist");
         }else{
@@ -142,7 +141,7 @@ public class Catalog {
      */
     public DbFile getDbFile(int tableid) throws NoSuchElementException {
         // some code goes here
-        Table tableToGetDbFile = iDHash.get(tableid);
+        Table tableToGetDbFile = idHash.get(tableid);
         if(tableToGetDbFile == null){
             throw new NoSuchElementException("the table doesn't exist");
         }else {
@@ -152,7 +151,7 @@ public class Catalog {
 
     public String getPrimaryKey(int tableid) {
         // some code goes here
-        Table tableToGetPrimaryKey = iDHash.get(tableid);
+        Table tableToGetPrimaryKey = idHash.get(tableid);
         if(tableToGetPrimaryKey == null){
             throw new NoSuchElementException("the table doesn't exist");
         }else{
@@ -163,13 +162,13 @@ public class Catalog {
 
     public Iterator<Integer> tableIdIterator() {
         // some code goes here
-        Set<Integer> keys = this.iDHash.keySet();
+        Set<Integer> keys = this.idHash.keySet();
         return keys.iterator();
     }
 
     public String getTableName(int id) {
         // some code goes here
-        Table tableToGetTableName = iDHash.get(id);
+        Table tableToGetTableName = idHash.get(id);
         if(tableToGetTableName == null){
             throw new NoSuchElementException("the table doesn't exist");
         }else{
@@ -180,7 +179,7 @@ public class Catalog {
     /** Delete all tables from the catalog */
     public void clear() {
         // some code goes here
-        this.iDHash.clear();
+        this.idHash.clear();
         this.nameHash.clear();
     }
 
