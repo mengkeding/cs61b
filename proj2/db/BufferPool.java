@@ -1,6 +1,9 @@
 package db;
 
 import java.io.*;
+import java.util.HashMap;
+import java.util.Random;
+
 
 /**
  * BufferPool manages the reading and writing of pages into memory from
@@ -11,6 +14,7 @@ import java.io.*;
  * a page, BufferPool checks that the transaction has the appropriate
  * locks to read/write the page.
  */
+
 public class BufferPool {
     /** Bytes per page, including header. */
     public static final int PAGE_SIZE = 4096;
@@ -20,6 +24,12 @@ public class BufferPool {
      constructor instead. */
     public static final int DEFAULT_PAGES = 50;
 
+    public int maxPageNum;
+    public HashMap<PageId,Page> pageMap;
+
+
+
+
     /**
      * Creates a BufferPool that caches up to numPages pages.
      *
@@ -27,6 +37,8 @@ public class BufferPool {
      */
     public BufferPool(int numPages) {
         // some code goes here
+        this.maxPageNum = numPages;
+        this.pageMap = new HashMap<>();
     }
 
     /**
@@ -34,20 +46,70 @@ public class BufferPool {
      * Will acquire a lock and may block if that lock is held by another
      * transaction.
      * <p>
+     *
      * The retrieved page should be looked up in the buffer pool.  If it
      * is present, it should be returned.  If it is not present, it should
      * be added to the buffer pool and returned.  If there is insufficient
      * space in the buffer pool, an page should be evicted and the new page
      * should be added in its place.
      *
+     * For this lab, if more than numPages requests are made for different pages,
+     * then instead of implementing an eviction policy, you may throw a DbException
+     *
+     *
+     * The buffer pool (class BufferPool in SimpleDB) is responsible for caching pages
+     * in memory that have been recently read from disk. All operators read and write pages
+     * from various files on disk through the buffer pool. It consists of a fixed number of pages,
+     * defined by the numPages parameter to the BufferPool constructor. In later labs,
+     * you will implement an eviction policy. For this lab, you only need to implement the constructor
+     * and the BufferPool.getPage() method used by the SeqScan operator. The BufferPool should
+     * store up to numPages pages. For this lab, if more than numPages requests are made for different pages,
+     * then instead of implementing an eviction policy, you may throw a DbException.
+     * In future labs you will be required to implement an eviction policy.
+     *
+     * The Database class provides a static method, Database.getBufferPool(), that returns a reference
+     * to the single BufferPool instance for the entire DB process.
+     *
+     * Exercise 3. Implement the getPage() method in: BufferPool.java
+     * We have not provided unit tests for BufferPool. The functionality you implemented will be tested in the implementation of HeapFile below.
+     * You should use the DbFile.readPage method to access pages of a DbFile.
+     *
+     *
+     *
+     *
      * @param tid the ID of the transaction requesting the page
      * @param pid the ID of the requested page
      * @param perm the requested permissions on the page
      */
-    public  Page getPage(TransactionId tid, PageId pid, Permissions perm)
+    public Page getPage(TransactionId tid, PageId pid, Permissions perm)
             throws TransactionAbortedException, DbException {
         // some code goes here
-        return null;
+        if(pageMap.containsKey(pid)){
+            return pageMap.get(pid);
+        }else{
+
+            //use PageId to get TableId, then use TableId to get DbFile,
+            //then readPage from DbFile, now you have the Page and PageId
+            //so that you can put it to the BufferPool pageMap, then return;
+
+            DbFile dbfile = Database.getCatalog().getDbFile(pid.getTableId());
+            Page newpage = dbfile.readPage(pid);
+            if( pageMap.size() >= maxPageNum){
+                Random random = new Random();
+                int i = random.nextInt(maxPageNum);
+                int j = 0;
+                for(PageId pid1 : pageMap.keySet()){
+                    if( i == j){
+                        pageMap.remove(random);
+                        pageMap.put(pid, newpage);
+                    }
+                    j++;
+                }
+            }else {
+                pageMap.put(pid, newpage);
+            }
+            return pageMap.get(pid);
+        }
     }
 
     /**
