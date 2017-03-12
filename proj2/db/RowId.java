@@ -61,13 +61,14 @@ public class RowId implements Serializable {
             return false;
         }else if(this == o){
             return true;
-        }else if(o.getClass() != this.getClass()){
+        }else if(!(o instanceof RowId)){
             return false;
         }
         RowId that = (RowId) o;
-        if(this.pageId.equals(that.pageId) && this.rowNo== that.rowNo{
+        if(this.pageId.equals(that.pageId) && this.rowNo== that.rowNo){
             return true;
         }
+        return false;
 
     }
 

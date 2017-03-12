@@ -14,12 +14,13 @@ import java.io.*;
 public class HeapPage implements Page {
 
     HeapPageId pid;
-    RowDesc td;
-    byte header[];
-    Row Rows[];
+    RowDesc rd;
+    byte[] header;
+    Row[] rows;
     int numSlots;
 
     byte[] oldData;
+
 
     /**
      * Create a HeapPage from a set of bytes of data read from disk.
@@ -39,7 +40,7 @@ public class HeapPage implements Page {
      */
     public HeapPage(HeapPageId id, byte[] data) throws IOException {
         this.pid = id;
-        this.td = Database.getCatalog().getRowDesc(id.getTableId());
+        this.rd = Database.getCatalog().getRowDesc(id.getTableId());
         this.numSlots = getNumRows();
         DataInputStream dis = new DataInputStream(new ByteArrayInputStream(data));
 
@@ -50,9 +51,9 @@ public class HeapPage implements Page {
 
         try{
             // allocate and read the actual Rows of thisR page
-            Rows = new Row[numSlots];
-            for (int i=0; i<Rows.length; i++)
-                Rows[i] = readNextRow(dis,i);
+            rows = new Row[numSlots];
+            for (int i=0; i<rows.length; i++)
+                rows[i] = readNextRow(dis,i);
         }catch(NoSuchElementException e){
             e.printStackTrace();
         }
@@ -66,7 +67,8 @@ public class HeapPage implements Page {
      */
     private int getNumRows() {
         // some code goes here
-        return 0;
+        int rowsize = this.rd.getSize();
+        return (int)Math.floor((BufferPool.PAGE_SIZE*8) / (rowsize * 8 + 1));
 
     }
 
@@ -75,10 +77,11 @@ public class HeapPage implements Page {
      * @return the number of bytes in the header of a page in a HeapFile with each Row occupying RowSize bytes
      */
     private int getHeaderSize() {
-
         // some code goes here
-        return 0;
+        //one header for one row, one bit for one header, 1 byte = 8 bit;
 
+        int headerSizeInBytes = (int) Math.ceil((double)this.getNumRows()/ 8);
+        return headerSizeInBytes;
     }
 
     /** Return a view of this page before it was modified
@@ -103,7 +106,7 @@ public class HeapPage implements Page {
      */
     public HeapPageId getId() {
         // some code goes here
-        throw new UnsupportedOperationException("implement this");
+        return this.pid;
     }
 
     /**
@@ -113,7 +116,7 @@ public class HeapPage implements Page {
         // if associated bit is not set, read forward to the next Row, and
         // return null.
         if (!isSlotUsed(slotId)) {
-            for (int i=0; i<td.getSize(); i++) {
+            for (int i=0; i<rd.getSize(); i++) {
                 try {
                     dis.readByte();
                 } catch (IOException e) {
@@ -124,12 +127,12 @@ public class HeapPage implements Page {
         }
 
         // read Columns in the Row
-        Row t = new Row(td);
+        Row t = new Row(rd);
         RowId rid = new RowId(pid, slotId);
         t.setRowId(rid);
         try {
-            for (int j=0; j<td.numColumns(); j++) {
-                Column f = td.getColumnType(j).parse(dis);
+            for (int j=0; j<rd.numColumns(); j++) {
+                Column f = rd.getColumnType(j).parse(dis);
                 t.setColumn(j, f);
             }
         } catch (java.text.ParseException e) {
@@ -167,11 +170,11 @@ public class HeapPage implements Page {
         }
 
         // create the Rows
-        for (int i=0; i<Rows.length; i++) {
+        for (int i=0; i<rows.length; i++) {
 
             // empty slot
             if (!isSlotUsed(i)) {
-                for (int j=0; j<td.getSize(); j++) {
+                for (int j=0; j<rd.getSize(); j++) {
                     try {
                         dos.writeByte(0);
                     } catch (IOException e) {
@@ -183,8 +186,8 @@ public class HeapPage implements Page {
             }
 
             // non-empty slot
-            for (int j=0; j<td.numColumns(); j++) {
-                Column f = Rows[i].getColumn(j);
+            for (int j=0; j<rd.numColumns(); j++) {
+                Column f = rows[i].getColumn(j);
                 try {
                     f.serialize(dos);
 
@@ -195,7 +198,7 @@ public class HeapPage implements Page {
         }
 
         // padding
-        int zerolen = BufferPool.PAGE_SIZE - (header.length + td.getSize() * Rows.length); //- numSlots * td.getSize();
+        int zerolen = BufferPool.PAGE_SIZE - (header.length + rd.getSize() * rows.length); //- numSlots * td.getSize();
         byte[] zeroes = new byte[zerolen];
         try {
             dos.write(zeroes, 0, zerolen);
@@ -268,21 +271,59 @@ public class HeapPage implements Page {
         return null;
     }
 
+
+
+
     /**
      * Returns the number of empty slots on this page.
      */
     public int getNumEmptySlots() {
         // some code goes here
-        return 0;
+        //if it is not used, then it is empty
+        int count = 0;
+        for(int i = 0; i < this.getNumRows(); i++){
+            if (!isSlotUsed(i)){
+                count++;
+            }
+        }
+        return count;
     }
 
+    //found in HeapFileEncoder:
+    // if we wrote a full page of rows, or if we're done altogether,
+    // write out the header of the page.
+    //
+    // in the header, write a 1 for bits that correspond to rows we've
+    // written and 0 for empty slots.
+    //
+    // when we're done, also flush the page to disk, but only if it has
+    // rows on it.  however, if this file is empty, do flush an empty
+    // page to disk.
     /**
      * Returns true if associated slot on this page is filled.
      */
     public boolean isSlotUsed(int i) {
         // some code goes here
-        return false;
+        // what is this i? µÚi¸öslot.
+        // bit = 1 :used ; bit = 0 : empty
+        // one header for one row, one bit for one header, 1 byte = 8 bit;
+        int headerSizeInBytes = i / 8;
+        int headerSizeInBits = i % 8;
+        if (headerSizeInBytes >= header.length || headerSizeInBytes < 0) {
+            return false;
+        }
+        byte byteWithThisSlot = header[headerSizeInBytes];
+        //wondering why not int bitmask = 1 << headerSizeInBits - 1;
+        int bitmask = 1 << headerSizeInBits;
+        return (byteWithThisSlot & bitmask) > 0;
     }
+
+//    HeapPageId pid;
+//    RowDesc rd;
+//    byte[] header =
+//    Row[] rows;
+//    int numSlots;
+//    byte[] oldData;
 
     /**
      * Abstraction to fill or clear a slot on this page.
@@ -296,10 +337,10 @@ public class HeapPage implements Page {
      * @return an iterator over all Rows on this page (calling remove on this iterator throws an UnsupportedOperationException)
      * (note that this iterator shouldn't return Rows in empty slots!)
      */
-    public Iterator<Row> iterator() {
-        // some code goes here
-        return null;
-    }
+//    public Iterator<Row> iterator() {
+//        // some code goes here
+//
+//    }
 
 }
 
