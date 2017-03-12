@@ -1,7 +1,30 @@
 package db;
 
+
+/**
+ * Exercise 4. Implement the skeleton methods in:
+ src/java/simpledb/HeapPageId.java
+ src/java/simpledb/RecordId.java
+ src/java/simpledb/HeapPage.java
+
+ * Although you will not use them directly in Lab 1, we ask you to implement getNumEmptySlots() and isSlotFree() in HeapPage.
+ * These require pushing around bits in the page header. You may find it helpful to look at the other methods that
+ * have been provided in HeapPage or in src/java/simpledb/HeapFileEncoder.java to understand the layout of pages.
+
+ * You will also need to implement an Iterator over the rows in the page,
+ * which may involve an auxiliary class or data structure.
+
+ * At this point, your code should pass the unit tests in HeapPageIdTest, RecordIdTest, and HeapPageReadTest.
+ */
+
+
 /** Unique identifier for HeapPage objects. */
 public class HeapPageId implements PageId {
+
+    public int tableId;
+    public int pageNum;
+
+
 
     /**
      * Constructor. Create a page id structure for a specific page of a
@@ -12,12 +35,16 @@ public class HeapPageId implements PageId {
      */
     public HeapPageId(int tableId, int pgNo) {
         // some code goes here
+        this.tableId = tableId;
+        this.pageNum = pgNo;
+
+
     }
 
     /** @return the table associated with this PageId */
     public int getTableId() {
         // some code goes here
-        return 0;
+        return this.tableId;
     }
 
     /**
@@ -26,7 +53,7 @@ public class HeapPageId implements PageId {
      */
     public int pageNumber() {
         // some code goes here
-        return 0;
+        return this.pageNum;
     }
 
     /**
@@ -37,7 +64,8 @@ public class HeapPageId implements PageId {
      */
     public int hashCode() {
         // some code goes here
-        throw new UnsupportedOperationException("implement this");
+        String string = "" + this.tableId + this.pageNum;
+        return string.hashCode();
     }
 
     /**
@@ -47,9 +75,16 @@ public class HeapPageId implements PageId {
      * @return true if the objects are equal (e.g., page numbers and table
      *   ids are the same)
      */
+
     public boolean equals(Object o) {
         // some code goes here
-        return false;
+       if(o == null){
+           return false;
+       }else if (!(o instanceof PageId)) {
+            return false;
+       }
+       PageId o1 = (PageId) o;
+       return this.tableId == o1.getTableId() && this.pageNum == o1.pageNumber();
     }
 
     /**
