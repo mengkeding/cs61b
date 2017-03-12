@@ -7,12 +7,6 @@ import java.io.Serializable;
 
     /**Implement the classes to manage rows, namely row, rowDesc. We have already implemented column, IntColumn, StringColumn, and Type for you.
      * Since you only need to support integer and (fixed length) string columns and fixed length rows, these are straightforward.
-     Implement the Catalog (this should be very simple).
-     Implement the BufferPool constructor and the getPage() method.
-     Implement the access methods, HeapPage and HeapFile and associated ID classes. A good portion of these files has already been written for you.
-     Implement the operator SeqScan.
-     At this point, you should be able to pass the ScanTest system test, which is the goal for this lab.
-     Section 2 below walks you through these implementation steps and the unit tests corresponding to each one in more detail.
 
      * row maintains information about the contents of a row. rows have a
      * specified schema specified by a rowDesc object and contain column objects
@@ -21,8 +15,9 @@ import java.io.Serializable;
     public class Row implements Serializable {
 
 
-        public final RowDesc schema;
-        public List<Column> RowList = new ArrayList<Column>();
+        public RowDesc schema;
+        public Column [] columns;
+        public RowId rowId;
 
         /**
          * Create a new row with the specified schema (type).
@@ -33,60 +28,38 @@ import java.io.Serializable;
          */
         public Row(RowDesc rd) {
             // some code goes here
-          this.schema = rd;
-          for(int i = 0; i < rd.rdItemList.size(); i++){
-              if(rd.rdItemList.get(i).columnType == Type.INT){
-                  IntColumn intCol = new IntColumn();
-                  RowList.add(intCol);
-              }else if(rd.rdItemList.get(i).columnType == Type.STRING){
-                  StringColumn strCol = new StringColumn();
-                  RowList.add(strCol);
-              }
-          }
+            this.schema = rd;
+            this.columns = new Column[schema.numColumns()];
         }
-
-
-
-
-//        public IntColumn(int i) {
-//            value = i;
-//        }
-//        public StringColumn(String s, int maxSize) {
-//            this.maxSize = maxSize;
-//
-//            if (s.length() > maxSize)
-//                value = s.substring(0, maxSize);
-//            else
-//                value = s;
-//        }
 
 
         /**
          * @return The rowDesc representing the schema of this row.
          */
-        public RowDesc getrowDesc() {
+        public RowDesc getRowDesc() {
             // some code goes here
             return this.schema;
         }
 
         /**
-         * @return The RecordId representing the location of this row on disk. May
+         * @return The RowId representing the location of this row on disk. May
          *         be null.
          */
-//        public RecordId getRecordId() {
-//            // some code goes here
-//            return null;
-//        }
-//
-//        /**
-//         * Set the RecordId information for this row.
-//         *
-//         * @param rid
-//         *            the new RecordId for this row.
-//         */
-//        public void setRecordId(RecordId rid) {
-//            // some code goes here
-//        }
+        public RowId getRowId() {
+            // some code goes here
+            return this.rowId;
+        }
+
+        /**
+         * Set the RowId information for this row.
+         *
+         * @param rid
+         *            the new RowId for this row.
+         */
+        public void setRowId(RowId rid) {
+            // some code goes here
+            this.rowId = rid;
+        }
 
         /**
          * Change the value of the ith column of this row.
@@ -101,7 +74,7 @@ import java.io.Serializable;
             if(i < 0 || i > schema.rdItemList.size()){
                 throw new IllegalArgumentException("invalid index");
             }else{
-                this.RowList.set(i,c);
+                this.columns[i] = c;
             }
         }
 
@@ -116,7 +89,7 @@ import java.io.Serializable;
             if(i < 0 || i > schema.rdItemList.size()){
                 throw new IllegalArgumentException("invalid index");
             } else {
-                return this.RowList.get(i);
+                return this.columns[i];
             }
         }
 
@@ -132,18 +105,25 @@ import java.io.Serializable;
         public String toString() {
             // some code goes here
             StringBuilder sb = new StringBuilder();
-            for(int i = 0 ; i < RowList.size(); i++){
-                if (this.RowList.get(i).getType() == Type.INT){
-                    sb.append(this.RowList.get(i));
+            for( int i = 0; i < columns.length - 1; i++){
+                if(columns[i].getType() == Type.INT){
+                    sb.append(columns[i]);
                     sb.append(",");
-                }else if(this.RowList.get(i).getType() == Type.STRING){
+                }else if(columns[i].getType() == Type.STRING){
                     sb.append("'");
-                    sb.append(this.RowList.get(i);)
+                    sb.append(columns[i]);
                     sb.append("'");
                     sb.append(",");
                 }
             }
-            return sb.toString();
+            if(columns[columns.length - 1].getType() == Type.INT){
+                sb.append(columns[columns.length - 1]);
+            }else if(columns[columns.length - 1].getType() == Type.STRING){
+                sb.append("'");
+                sb.append(columns[columns.length - 1]);
+                sb.append("'");
+            }
+         return  sb.toString();
         }
 
 
@@ -154,7 +134,8 @@ import java.io.Serializable;
          * */
         public Iterator<Column> columns(){
             // some code goes here
-            return null;
+            return Arrays.asList(columns).iterator();
+
         }
 
         /**
@@ -162,8 +143,7 @@ import java.io.Serializable;
          * */
         public void resetRowDesc(RowDesc td)
         {
-            // so
-            // me code goes here
+            this.schema = td;
 
         }
     }
