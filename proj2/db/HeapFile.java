@@ -1,5 +1,7 @@
 package db;
 
+import edu.princeton.cs.algs4.Heap;
+
 import java.io.*;
 import java.util.*;
 
@@ -89,7 +91,7 @@ public class HeapFile implements DbFile {
             }
             //move the pointer to the beginning of the page we want to read.(or the end of the previous page)
             f.seek(offset);
-            //read the whole page.
+            //read the whole page into the byte array data.
             f.readFully(data);
             //close the RandomAccessFile f.
             f.close();
@@ -114,7 +116,8 @@ public class HeapFile implements DbFile {
      */
     public int numPages() {
         // some code goes here
-        return null;
+        //file.length() method returns the length of this file, measured in bytes.
+        return (int) Math.ceil(this.file.length() / BufferPool.PAGE_SIZE);
     }
 
     // see DbFile.java for javadocs
@@ -133,43 +136,27 @@ public class HeapFile implements DbFile {
         // not necessary for proj1
     }
 
+
     // see DbFile.java for javadocs
     /**
-     * Returns an iterator over all the Rows stored in this DbFile. The
+     * Returns an iterator over all the rows stored in this DbFile. The
      * iterator must use {@link BufferPool#getPage}, rather than
      * {@link #readPage} to iterate through the pages.
      *
-     * @return an iterator over all the Rows stored in this DbFile.
+     * @return an iterator over all the rows stored in this DbFile.
      */
-    public DbFileIterator iterator(TransactionId tid) {
+    public DbFileIterator iterator(TransactionId tid){
         // some code goes here
-        return new DbFileIterator() {
-            int index = 0;
-            @Override
-            public void open() throws DbException, TransactionAbortedException {
-
-            }
-
-            @Override
-            public boolean hasNext() throws DbException, TransactionAbortedException {
-
-            }
-
-            @Override
-            public Row next() throws DbException, TransactionAbortedException, NoSuchElementException {
-                return null;
-            }
-
-            @Override
-            public void rewind() throws DbException, TransactionAbortedException {
-
-            }
-
-            @Override
-            public void close() {
-
-            }
-        };
+        try{
+            return new HeapFileIterator(this,tid);
+        }
+        catch(DbException dbe){
+            dbe.printStackTrace();
+        }
+        catch(TransactionAbortedException tae){
+            tae.printStackTrace();
+        }
+        return null;
     }
 
 }
