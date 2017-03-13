@@ -1,23 +1,6 @@
 package db;
 
 
-/**
- * Exercise 4. Implement the skeleton methods in:
- src/java/simpledb/HeapPageId.java
- src/java/simpledb/RecordId.java
- src/java/simpledb/HeapPage.java
-
- * Although you will not use them directly in Lab 1, we ask you to implement getNumEmptySlots() and isSlotFree() in HeapPage.
- * These require pushing around bits in the page header. You may find it helpful to look at the other methods that
- * have been provided in HeapPage or in src/java/simpledb/HeapFileEncoder.java to understand the layout of pages.
-
- * You will also need to implement an Iterator over the rows in the page,
- * which may involve an auxiliary class or data structure.
-
- * At this point, your code should pass the unit tests in HeapPageIdTest, RecordIdTest, and HeapPageReadTest.
- */
-
-
 /** Unique identifier for HeapPage objects. */
 public class HeapPageId implements PageId {
 

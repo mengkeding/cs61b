@@ -318,12 +318,7 @@ public class HeapPage implements Page {
         return (byteWithThisSlot & bitmask) > 0;
     }
 
-//    HeapPageId pid;
-//    RowDesc rd;
-//    byte[] header =
-//    Row[] rows;
-//    int numSlots;
-//    byte[] oldData;
+
 
     /**
      * Abstraction to fill or clear a slot on this page.
@@ -337,10 +332,31 @@ public class HeapPage implements Page {
      * @return an iterator over all Rows on this page (calling remove on this iterator throws an UnsupportedOperationException)
      * (note that this iterator shouldn't return Rows in empty slots!)
      */
-//    public Iterator<Row> iterator() {
-//        // some code goes here
-//
-//    }
+    public Iterator<Row> iterator() {
+        // some code goes here
+        return new Iterator<Row>() {
+
+            int index  = 0;
+            @Override
+            public boolean hasNext() {
+                int avaliableSlot = numSlots - getNumEmptySlots();
+                if( index < avaliableSlot) {
+                    return true;
+                }
+                return false;
+            }
+
+            @Override
+            public Row next() {
+                    return rows[index++];
+            }
+
+            public void remove(){
+                throw new UnsupportedOperationException();
+            }
+        };
+
+    }
 
 }
 

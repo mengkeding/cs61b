@@ -34,7 +34,7 @@ public interface DbFile extends Serializable {
      * may block until the lock can be acquired.
      *
      * @param tid The transaction performing the update
-     * @param t The Row to add.  This Row should be updated to reflect that
+     * @param r The Row to add.  This Row should be updated to reflect that
      *          it is now stored in this file.
      * @return An ArrayList contain the pages that were modified
      * @throws DbException if the Row cannot be added
