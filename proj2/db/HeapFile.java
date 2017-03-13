@@ -15,6 +15,11 @@ import java.util.*;
  */
 public class HeapFile implements DbFile {
 
+    public RowDesc schema;
+    public File file;
+
+
+
     /**
      * Constructs a heap file backed by the specified file.
      *
@@ -22,8 +27,11 @@ public class HeapFile implements DbFile {
      *            the file that stores the on-disk backing store for this heap
      *            file.
      */
-    public HeapFile(File f, RowDesc td) {
+    public HeapFile(File f, RowDesc rd) {
         // some code goes here
+        this.schema = rd;
+        this.file = f;
+
     }
 
     /**
@@ -33,7 +41,7 @@ public class HeapFile implements DbFile {
      */
     public File getFile() {
         // some code goes here
-        return null;
+        return this.file;
     }
 
     /**
@@ -47,7 +55,7 @@ public class HeapFile implements DbFile {
      */
     public int getId() {
         // some code goes here
-        throw new UnsupportedOperationException("implement this");
+        return this.file.getAbsoluteFile().hashCode();
     }
 
     /**
@@ -57,13 +65,42 @@ public class HeapFile implements DbFile {
      */
     public RowDesc getRowDesc() {
         // some code goes here
-        throw new UnsupportedOperationException("implement this");
+        return this.schema;
     }
 
+    /**
+     * Read the specified page from disk.
+     *
+     * @throws IllegalArgumentException if the page does not exist in this file.
+     */
     // see DbFile.java for javadocs
     public Page readPage(PageId pid) {
         // some code goes here
-        return null;
+        // pageNumber starts from 0?
+        // offset is the size in bytes of the total of all previous pages.
+        // data is the bytes info of this page.
+        try{
+            RandomAccessFile f = new RandomAccessFile(this.file, "r");
+            int offset = BufferPool.PAGE_SIZE * pid.pageNumber();
+            byte[] data = new byte[BufferPool.PAGE_SIZE];
+            if(offset + BufferPool.PAGE_SIZE > f.length()){
+                System.err.print("ERROR: page offset exceeds max size");
+                System.exit(1);
+            }
+            //move the pointer to the beginning of the page we want to read.(or the end of the previous page)
+            f.seek(offset);
+            //read the whole page.
+            f.readFully(data);
+            //close the RandomAccessFile f.
+            f.close();
+        }
+        catch(FileNotFoundException e){
+            System.err.print("FileNotFoundException" + e.getMessage());
+
+        }
+        catch(IOException e){
+            System.err.print("IOException" + e.getMessage());
+        }
     }
 
     // see DbFile.java for javadocs
@@ -77,7 +114,7 @@ public class HeapFile implements DbFile {
      */
     public int numPages() {
         // some code goes here
-        return 0;
+        return null;
     }
 
     // see DbFile.java for javadocs
@@ -97,9 +134,42 @@ public class HeapFile implements DbFile {
     }
 
     // see DbFile.java for javadocs
+    /**
+     * Returns an iterator over all the Rows stored in this DbFile. The
+     * iterator must use {@link BufferPool#getPage}, rather than
+     * {@link #readPage} to iterate through the pages.
+     *
+     * @return an iterator over all the Rows stored in this DbFile.
+     */
     public DbFileIterator iterator(TransactionId tid) {
         // some code goes here
-        return null;
+        return new DbFileIterator() {
+            int index = 0;
+            @Override
+            public void open() throws DbException, TransactionAbortedException {
+
+            }
+
+            @Override
+            public boolean hasNext() throws DbException, TransactionAbortedException {
+
+            }
+
+            @Override
+            public Row next() throws DbException, TransactionAbortedException, NoSuchElementException {
+                return null;
+            }
+
+            @Override
+            public void rewind() throws DbException, TransactionAbortedException {
+
+            }
+
+            @Override
+            public void close() {
+
+            }
+        };
     }
 
 }
