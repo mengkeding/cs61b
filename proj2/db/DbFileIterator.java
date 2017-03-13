@@ -3,7 +3,7 @@ package db;
 import java.io.Serializable;
 import java.util.NoSuchElementException;
 /**
- * DbFileIterator is the iterator interface that all SimpleDB Dbfile should
+ * DbFileIterator is the iterator interface that all DB Dbfile should
  * implement.
  */
 public interface DbFileIterator extends Serializable {
@@ -14,16 +14,16 @@ public interface DbFileIterator extends Serializable {
     public void open()
             throws DbException, TransactionAbortedException;
 
-    /** @return true if there are more tuples available. */
+    /** @return true if there are more rows available. */
     public boolean hasNext()
             throws DbException, TransactionAbortedException;
 
     /**
-     * Gets the next tuple from the operator (typically implementing by reading
+     * Gets the next row from the operator (typically implementing by reading
      * from a child operator or an access method).
      *
-     * @return The next tuple in the iterator.
-     * @throws NoSuchElementException if there are no more tuples
+     * @return The next row in the iterator.
+     * @throws NoSuchElementException if there are no more rows
      */
     public Row next()
             throws DbException, TransactionAbortedException, NoSuchElementException;
