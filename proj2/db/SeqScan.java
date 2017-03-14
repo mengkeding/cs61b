@@ -2,6 +2,7 @@ package db;
 
 import java.util.NoSuchElementException;
 import java.util.*;
+import java.io.*;
 
 /**
  * SeqScan is an implementation of a sequential scan access method that reads
@@ -9,6 +10,12 @@ import java.util.*;
  * disk).
  */
 public class SeqScan implements DbIterator {
+
+    private TransactionId tid;
+    private int tableid;
+    private String tableAlias;
+    private DbFile dbfile;
+    private DbFileIterator dbFileIterator;
 
     private static final long serialVersionUID = 1L;
 
@@ -30,6 +37,11 @@ public class SeqScan implements DbIterator {
      */
     public SeqScan(TransactionId tid, int tableid, String tableAlias) {
         // some code goes here
+        this.tid = tid;
+        this.tableid = tableid;
+        this.tableAlias = tableAlias;
+        this.dbfile = Database.getCatalog().getDbFile(tableid);
+        this.dbFileIterator = this.dbfile.iterator(tid);
     }
 
     /**
@@ -37,8 +49,8 @@ public class SeqScan implements DbIterator {
      *       return the table name of the table the operator scans. This should
      *       be the actual name of the table in the catalog of the database
      * */
-    public String getTableName() {
-        return null;
+    public String getTableName(){
+        return Database.getCatalog().getTableName(this.tableid);
     }
 
     /**
@@ -47,7 +59,7 @@ public class SeqScan implements DbIterator {
     public String getAlias()
     {
         // some code goes here
-        return null;
+        return this.tableAlias;
     }
 
     /**
@@ -64,6 +76,10 @@ public class SeqScan implements DbIterator {
      */
     public void reset(int tableid, String tableAlias) {
         // some code goes here
+        this.tableid = tableid;
+        this.tableAlias = tableAlias;
+        this.dbfile = Database.getCatalog().getDbFile(this.tableid);
+        this.dbFileIterator = this.dbfile.iterator(tid);
     }
 
     public SeqScan(TransactionId tid, int tableid) {
@@ -72,6 +88,8 @@ public class SeqScan implements DbIterator {
 
     public void open() throws DbException, TransactionAbortedException {
         // some code goes here
+        this.dbFileIterator.open();
+
     }
 
     /**
@@ -85,26 +103,38 @@ public class SeqScan implements DbIterator {
      */
     public RowDesc getRowDesc() {
         // some code goes here
-        return null;
+        RowDesc origRowDesc =  Database.getCatalog().getRowDesc(this.tableid);
+        int rdsize = origRowDesc.numColumns();
+        Type [] newTypes = new Type[rdsize];
+        String [] newColNames = new String[rdsize];
+        for(int i = 0; i < rdsize; i++){
+            newTypes [i] = origRowDesc.getColumnType(i);
+            newColNames [i] = tableAlias +"." + origRowDesc.getColumnName(i);
+        }
+        return new RowDesc(newTypes, newColNames);
     }
 
     public boolean hasNext() throws TransactionAbortedException, DbException {
         // some code goes here
-        return false;
+        return this.dbFileIterator.hasNext();
     }
 
     public Row next() throws NoSuchElementException,
             TransactionAbortedException, DbException {
         // some code goes here
-        return null;
+        return this.dbFileIterator.next();
+
     }
 
     public void close() {
         // some code goes here
+        this.dbFileIterator.close();
+
     }
 
     public void rewind() throws DbException, NoSuchElementException,
             TransactionAbortedException {
         // some code goes here
+        this.dbFileIterator.rewind();
     }
 }
