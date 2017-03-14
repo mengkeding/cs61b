@@ -17,8 +17,8 @@ import java.util.*;
  */
 public class HeapFile implements DbFile {
 
-    public RowDesc schema;
-    public File file;
+    private RowDesc schema;
+    private File file;
 
 
 
@@ -95,6 +95,7 @@ public class HeapFile implements DbFile {
             f.readFully(data);
             //close the RandomAccessFile f.
             f.close();
+            return new HeapPage((HeapPageId)pid,data);
         }
         catch(FileNotFoundException e){
             System.err.print("FileNotFoundException" + e.getMessage());
@@ -103,6 +104,7 @@ public class HeapFile implements DbFile {
         catch(IOException e){
             System.err.print("IOException" + e.getMessage());
         }
+        return null;
     }
 
     // see DbFile.java for javadocs

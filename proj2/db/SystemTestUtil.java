@@ -87,7 +87,7 @@ public class SystemTestUtil {
         // Convert the Rows list to a heap file and open it
         File temp = File.createTempFile("table", ".dat");
         temp.deleteOnExit();
-//        HeapFileEncoder.convert(Rows, temp, BufferPool.PAGE_SIZE, columns);
+        HeapFileEncoder.convert(Rows, temp, BufferPool.PAGE_SIZE, columns);
           return temp;
     }
 
@@ -103,15 +103,15 @@ public class SystemTestUtil {
     public static void matchRows(DbFile f, List<ArrayList<Integer>> Rows)
             throws DbException, TransactionAbortedException, IOException {
         TransactionId tid = new TransactionId();
-//        matchRows(f, tid, Rows);
-//        Database.getBufferPool().transactionComplete(tid);
+        matchRows(f, tid, Rows);
+        Database.getBufferPool().transactionComplete(tid);
     }
 
-//    public static void matchRows(DbFile f, TransactionId tid, List<ArrayList<Integer>> Rows)
-//            throws DbException, TransactionAbortedException, IOException {
-//        SeqScan scan = new SeqScan(tid, f.getId(), "");
-//        matchRows(scan, Rows);
-//    }
+    public static void matchRows(DbFile f, TransactionId tid, List<ArrayList<Integer>> Rows)
+            throws DbException, TransactionAbortedException, IOException {
+        SeqScan scan = new SeqScan(tid, f.getId(), "");
+        matchRows(scan, Rows);
+    }
 
     public static void matchRows(DbIterator iterator, List<ArrayList<Integer>> Rows)
             throws DbException, TransactionAbortedException, IOException {
