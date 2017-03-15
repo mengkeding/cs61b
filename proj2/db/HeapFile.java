@@ -83,6 +83,7 @@ public class HeapFile implements DbFile {
         // data is the bytes info of this page.
         try{
             RandomAccessFile f = new RandomAccessFile(this.file, "r");
+            long filesize = f.length();
             int offset = BufferPool.PAGE_SIZE * pid.pageNumber();
             byte[] data = new byte[BufferPool.PAGE_SIZE];
             if(offset + BufferPool.PAGE_SIZE > f.length()){

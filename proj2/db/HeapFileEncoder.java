@@ -51,6 +51,9 @@ public class HeapFileEncoder {
         convert(tempInput, outFile, npagebytes, numFields);
     }
 
+
+
+
     public static void convert(File inFile, File outFile, int npagebytes,
                                int numFields) throws IOException {
         Type[] ts = new Type[numFields];
@@ -87,6 +90,9 @@ public class HeapFileEncoder {
      * @throws IOException if the input/output file can't be opened or a
      *   malformed input line is encountered
      */
+
+//    HeapFileEncoder.convert(sourceTblFile,targetDatFile,
+//    BufferPool.PAGE_SIZE,numOfAttributes,ts,fieldSeparator);
     public static void convert(File inFile, File outFile, int npagebytes,
                                int numFields, Type[] typeAr, char fieldSeparator)
             throws IOException {
@@ -97,8 +103,8 @@ public class HeapFileEncoder {
         }
         int nrecords = (npagebytes * 8) /  (nrecbytes * 8 + 1);  //floor comes for free
 
-        //  per record, we need one bit; there are nrecords per page, so we need
-        // nrecords bits, i.e., ((nrecords/32)+1) integers.
+        //  per record, we need one bit; there are n records per page, so we need
+        // n records bits, i.e., ((n records/32)+1) integers.
         int nheaderbytes = (nrecords / 8);
         if (nheaderbytes * 8 < nrecords)
             nheaderbytes++;  //ceiling
