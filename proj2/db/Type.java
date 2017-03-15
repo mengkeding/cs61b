@@ -27,6 +27,21 @@ public enum Type implements Serializable {
             }
         }
 
+    },FLOAT("float") {
+        @Override
+        public int getLen() {
+            return 4;
+        }
+
+        @Override
+        public Column parse(DataInputStream dis) throws ParseException {
+            try {
+                return new FloatColumn(dis.readFloat());
+            }  catch (IOException e) {
+                throw new ParseException("couldn't parse", 0);
+            }
+        }
+
     }, STRING("string") {
         @Override
         public int getLen() {
@@ -45,8 +60,7 @@ public enum Type implements Serializable {
                 throw new ParseException("couldn't parse", 0);
             }
         }
-    };
-
+    },;
     public final String type;
 
     Type(String type){
