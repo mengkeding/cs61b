@@ -1,15 +1,14 @@
-package simpledb;
+package db;
 
 import java.util.*;
 
 import org.junit.Before;
 import org.junit.Test;
-
-import simpledb.systemtest.SimpleDbTestBase;
+        
 import static org.junit.Assert.assertEquals;
 import junit.framework.JUnit4TestAdapter;
 
-public class StringAggregatorTest extends SimpleDbTestBase {
+public class StringAggregatorTest extends DbTestBase {
 
   int width1 = 2;
   DbIterator scan1;
@@ -18,8 +17,8 @@ public class StringAggregatorTest extends SimpleDbTestBase {
   /**
    * Initialize each unit test
    */
-  @Before public void createTupleList() throws Exception {
-    this.scan1 = TestUtil.createTupleList(width1,
+  @Before public void createRowList() throws Exception {
+    this.scan1 = TestUtil.createRowList(width1,
         new Object[] { 1, "a",
                     1, "b",
                     1, "c",
@@ -39,17 +38,17 @@ public class StringAggregatorTest extends SimpleDbTestBase {
   }
 
   /**
-   * Test String.mergeTupleIntoGroup() and iterator() over a COUNT
+   * Test String.mergeRowIntoGroup() and iterator() over a COUNT
    */
   @Test public void mergeCount() throws Exception {
     scan1.open();
-    StringAggregator agg = new StringAggregator(0, Type.INT_TYPE, 1, Aggregator.Op.COUNT);
+    StringAggregator agg = new StringAggregator(0, Type.INT, 1, Aggregator.Op.COUNT);
 
     for (int[] step : count) {
-      agg.mergeTupleIntoGroup(scan1.next());
+      agg.mergeRowIntoGroup(scan1.next());
       DbIterator it = agg.iterator();
       it.open();
-      TestUtil.matchAllTuples(TestUtil.createTupleList(width1, step), it);
+      TestUtil.matchAllRows(TestUtil.createRowList(width1, step), it);
     }
   }
 
@@ -59,10 +58,10 @@ public class StringAggregatorTest extends SimpleDbTestBase {
   @Test public void testIterator() throws Exception {
     // first, populate the aggregator via sum over scan1
     scan1.open();
-    StringAggregator agg = new StringAggregator(0, Type.INT_TYPE, 1, Aggregator.Op.COUNT);
+    StringAggregator agg = new StringAggregator(0, Type.INT, 1, Aggregator.Op.COUNT);
     try {
       while (true)
-        agg.mergeTupleIntoGroup(scan1.next());
+        agg.mergeRowIntoGroup(scan1.next());
     } catch (NoSuchElementException e) {
       // explicitly ignored
     }
@@ -99,7 +98,7 @@ public class StringAggregatorTest extends SimpleDbTestBase {
     it.close();
     try {
       it.next();
-      throw new Exception("StringAggreator iterator yielded tuple after close");
+      throw new Exception("StringAggreator iterator yielded Row after close");
     } catch (Exception e) {
       // explicitly ignored
     }

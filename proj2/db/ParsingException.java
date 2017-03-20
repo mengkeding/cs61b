@@ -1,4 +1,4 @@
-package simpledb;
+package db;
 import java.lang.Exception;
 
 public class ParsingException extends Exception {

@@ -1,7 +1,7 @@
-package simpledb;
+package db;
 
 /**
- * Inserts tuples read from the child operator into the tableid specified in the
+ * Inserts Rows read from the child operator into the tableid specified in the
  * constructor
  */
 public class Insert extends Operator {
@@ -14,11 +14,11 @@ public class Insert extends Operator {
      * @param t
      *            The transaction running the insert.
      * @param child
-     *            The child operator from which to read tuples to be inserted.
+     *            The child operator from which to read Rows to be inserted.
      * @param tableid
-     *            The table in which to insert tuples.
+     *            The table in which to insert Rows.
      * @throws DbException
-     *             if TupleDesc of child differs from table into which we are to
+     *             if RowDesc of child differs from table into which we are to
      *             insert.
      */
     public Insert(TransactionId t,DbIterator child, int tableid)
@@ -26,7 +26,7 @@ public class Insert extends Operator {
         // some code goes here
     }
 
-    public TupleDesc getTupleDesc() {
+    public RowDesc getRowDesc() {
         // some code goes here
         return null;
     }
@@ -44,19 +44,19 @@ public class Insert extends Operator {
     }
 
     /**
-     * Inserts tuples read from child into the tableid specified by the
-     * constructor. It returns a one field tuple containing the number of
+     * Inserts Rows read from child into the tableid specified by the
+     * constructor. It returns a one field Row containing the number of
      * inserted records. Inserts should be passed through BufferPool. An
      * instances of BufferPool is available via Database.getBufferPool(). Note
-     * that insert DOES NOT need check to see if a particular tuple is a
+     * that insert DOES NOT need check to see if a particular Row is a
      * duplicate before inserting it.
      * 
-     * @return A 1-field tuple containing the number of inserted records, or
+     * @return A 1-field Row containing the number of inserted records, or
      *         null if called more than once.
      * @see Database#getBufferPool
-     * @see BufferPool#insertTuple
+     * @see BufferPool#insertRow
      */
-    protected Tuple fetchNext() throws TransactionAbortedException, DbException {
+    protected Row fetchNext() throws TransactionAbortedException, DbException {
         // some code goes here
         return null;
     }

@@ -1,4 +1,4 @@
-package simpledb;
+package db;
 
 /** A LogicalSubplanJoinNode represens the state needed of a join of a
  * table to a subplan in a LogicalQueryPlan -- inherits state from

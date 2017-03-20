@@ -1,4 +1,4 @@
-package simpledb;
+package db;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -8,9 +8,8 @@ import junit.framework.JUnit4TestAdapter;
 import org.junit.Before;
 import org.junit.Test;
 
-import simpledb.systemtest.SimpleDbTestBase;
 
-public class FilterTest extends SimpleDbTestBase {
+public class FilterTest extends DbTestBase {
 
   int testWidth = 3;
   DbIterator scan;
@@ -23,13 +22,13 @@ public class FilterTest extends SimpleDbTestBase {
   }
 
   /**
-   * Unit test for Filter.getTupleDesc()
+   * Unit test for Filter.getRowDesc()
    */
-  @Test public void getTupleDesc() {
-    Predicate pred = new Predicate(0, Predicate.Op.EQUALS, TestUtil.getField(0));
+  @Test public void getRowDesc() {
+    Predicate pred = new Predicate(0, Predicate.Op.EQUALS, TestUtil.getColumn(0));
     Filter op = new Filter(pred, scan);
-    TupleDesc expected = Utility.getTupleDesc(testWidth);
-    TupleDesc actual = op.getTupleDesc();
+    RowDesc expected = Utility.getRowDesc(testWidth);
+    RowDesc actual = op.getRowDesc();
     assertEquals(expected, actual);
   }
 
@@ -37,7 +36,7 @@ public class FilterTest extends SimpleDbTestBase {
    * Unit test for Filter.rewind()
    */
   @Test public void rewind() throws Exception {
-    Predicate pred = new Predicate(0, Predicate.Op.EQUALS, TestUtil.getField(0));
+    Predicate pred = new Predicate(0, Predicate.Op.EQUALS, TestUtil.getColumn(0));
     Filter op = new Filter(pred, scan);
     op.open();
     assertTrue(op.hasNext());
@@ -45,19 +44,19 @@ public class FilterTest extends SimpleDbTestBase {
     assertTrue(TestUtil.checkExhausted(op));
 
     op.rewind();
-    Tuple expected = Utility.getHeapTuple(0, testWidth);
-    Tuple actual = op.next();
-    assertTrue(TestUtil.compareTuples(expected, actual));
+    Row expected = Utility.getHeapRow(0, testWidth);
+    Row actual = op.next();
+    assertTrue(TestUtil.compareRows(expected, actual));
     op.close();
   }
 
   /**
    * Unit test for Filter.getNext() using a &lt; predicate that filters
-   *   some tuples
+   *   some Rows
    */
   @Test public void filterSomeLessThan() throws Exception {
     Predicate pred;
-    pred = new Predicate(0, Predicate.Op.LESS_THAN, TestUtil.getField(2));
+    pred = new Predicate(0, Predicate.Op.LESS_THAN, TestUtil.getColumn(2));
     Filter op = new Filter(pred, scan);
     TestUtil.MockScan expectedOut = new TestUtil.MockScan(-5, 2, testWidth);
     op.open();
@@ -71,7 +70,7 @@ public class FilterTest extends SimpleDbTestBase {
    */
   @Test public void filterAllLessThan() throws Exception {
     Predicate pred;
-    pred = new Predicate(0, Predicate.Op.LESS_THAN, TestUtil.getField(-5));
+    pred = new Predicate(0, Predicate.Op.LESS_THAN, TestUtil.getColumn(-5));
     Filter op = new Filter(pred, scan);
     op.open();
     assertTrue(TestUtil.checkExhausted(op));
@@ -84,36 +83,36 @@ public class FilterTest extends SimpleDbTestBase {
   @Test public void filterEqual() throws Exception {
     Predicate pred;
     this.scan = new TestUtil.MockScan(-5, 5, testWidth);
-    pred = new Predicate(0, Predicate.Op.EQUALS, TestUtil.getField(-5));
+    pred = new Predicate(0, Predicate.Op.EQUALS, TestUtil.getColumn(-5));
     Filter op = new Filter(pred, scan);
     op.open();
-    assertTrue(TestUtil.compareTuples(Utility.getHeapTuple(-5, testWidth),
+    assertTrue(TestUtil.compareRows(Utility.getHeapRow(-5, testWidth),
         op.next()));
     op.close();
 
     this.scan = new TestUtil.MockScan(-5, 5, testWidth);
-    pred = new Predicate(0, Predicate.Op.EQUALS, TestUtil.getField(0));
+    pred = new Predicate(0, Predicate.Op.EQUALS, TestUtil.getColumn(0));
     op = new Filter(pred, scan);
     op.open();
-    assertTrue(TestUtil.compareTuples(Utility.getHeapTuple(0, testWidth),
+    assertTrue(TestUtil.compareRows(Utility.getHeapRow(0, testWidth),
         op.next()));
     op.close();
 
     this.scan = new TestUtil.MockScan(-5, 5, testWidth);
-    pred = new Predicate(0, Predicate.Op.EQUALS, TestUtil.getField(4));
+    pred = new Predicate(0, Predicate.Op.EQUALS, TestUtil.getColumn(4));
     op = new Filter(pred, scan);
     op.open();
-    assertTrue(TestUtil.compareTuples(Utility.getHeapTuple(4, testWidth),
+    assertTrue(TestUtil.compareRows(Utility.getHeapRow(4, testWidth),
         op.next()));
     op.close();
   }
 
   /**
-   * Unit test for Filter.getNext() using an = predicate passing no tuples
+   * Unit test for Filter.getNext() using an = predicate passing no Rows
    */
-  @Test public void filterEqualNoTuples() throws Exception {
+  @Test public void filterEqualNoRows() throws Exception {
     Predicate pred;
-    pred = new Predicate(0, Predicate.Op.EQUALS, TestUtil.getField(5));
+    pred = new Predicate(0, Predicate.Op.EQUALS, TestUtil.getColumn(5));
     Filter op = new Filter(pred, scan);
     op.open();
     TestUtil.checkExhausted(op);

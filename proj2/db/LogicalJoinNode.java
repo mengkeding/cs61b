@@ -1,4 +1,4 @@
-package simpledb;
+package db;
 
 /** A LogicalJoinNode represens the state needed of a join of two
  * tables in a LogicalQueryPlan */

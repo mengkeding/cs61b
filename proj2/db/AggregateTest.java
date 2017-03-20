@@ -1,4 +1,4 @@
-package simpledb;
+package db;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -8,9 +8,8 @@ import junit.framework.JUnit4TestAdapter;
 import org.junit.Before;
 import org.junit.Test;
 
-import simpledb.systemtest.SimpleDbTestBase;
 
-public class AggregateTest extends SimpleDbTestBase {
+public class AggregateTest extends DbTestBase {
 
   int width1 = 2;
   DbIterator scan1;
@@ -28,8 +27,8 @@ public class AggregateTest extends SimpleDbTestBase {
   /**
    * Initialize each unit test
    */
-  @Before public void createTupleLists() throws Exception {	  
-    this.scan1 = TestUtil.createTupleList(width1,
+  @Before public void createRowLists() throws Exception {	  
+    this.scan1 = TestUtil.createRowList(width1,
         new int[] { 1, 2,
                     1, 4,
                     1, 6,
@@ -37,7 +36,7 @@ public class AggregateTest extends SimpleDbTestBase {
                     3, 4,
                     3, 6,
                     5, 7 });
-    this.scan2 = TestUtil.createTupleList(width1,
+    this.scan2 = TestUtil.createRowList(width1,
         new Object[] { 1, "a",
                     1, "a",
                     1, "a",
@@ -45,7 +44,7 @@ public class AggregateTest extends SimpleDbTestBase {
                     3, "a",
                     3, "a",
                     5, "a" });
-    this.scan3 = TestUtil.createTupleList(width1,
+    this.scan3 = TestUtil.createRowList(width1,
         new Object[] { "a", 2,
                     "a", 4,
                     "a", 6,
@@ -54,28 +53,28 @@ public class AggregateTest extends SimpleDbTestBase {
                     "b", 6,
                     "c", 7 });
 
-    this.sum = TestUtil.createTupleList(width1,
+    this.sum = TestUtil.createRowList(width1,
         new int[] { 1, 12,
                     3, 12,
                     5, 7 });
-    this.sumstring = TestUtil.createTupleList(width1,
+    this.sumstring = TestUtil.createRowList(width1,
         new Object[] { "a", 12,
                     "b", 12,
                     "c", 7 });
 
-    this.avg = TestUtil.createTupleList(width1,
+    this.avg = TestUtil.createRowList(width1,
         new int[] { 1, 4,
                     3, 4,
                     5, 7 });
-    this.min = TestUtil.createTupleList(width1,
+    this.min = TestUtil.createRowList(width1,
         new int[] { 1, 2,
                     3, 2,
                     5, 7 });
-    this.max = TestUtil.createTupleList(width1,
+    this.max = TestUtil.createRowList(width1,
         new int[] { 1, 6,
                     3, 6,
                     5, 7 });
-    this.count = TestUtil.createTupleList(width1,
+    this.count = TestUtil.createRowList(width1,
         new int[] { 1, 3,
                     3, 3,
                     5, 1 });
@@ -83,13 +82,13 @@ public class AggregateTest extends SimpleDbTestBase {
   }
 
   /**
-   * Unit test for Aggregate.getTupleDesc()
+   * Unit test for Aggregate.getRowDesc()
    */
-  @Test public void getTupleDesc() {
+  @Test public void getRowDesc() {
     Aggregate op = new Aggregate(scan1, 0, 0,
         Aggregator.Op.MIN);
-    TupleDesc expected = Utility.getTupleDesc(2);
-    TupleDesc actual = op.getTupleDesc();
+    RowDesc expected = Utility.getRowDesc(2);
+    RowDesc actual = op.getRowDesc();
     assertEquals(expected, actual);
   }
 
@@ -107,7 +106,7 @@ public class AggregateTest extends SimpleDbTestBase {
 
     op.rewind();
     min.open();
-    TestUtil.matchAllTuples(min, op);
+    TestUtil.matchAllRows(min, op);
   }
 
   /**
@@ -118,7 +117,7 @@ public class AggregateTest extends SimpleDbTestBase {
         Aggregator.Op.COUNT);
     op.open();
     count.open();
-    TestUtil.matchAllTuples(count, op);
+    TestUtil.matchAllRows(count, op);
   }
 
   /**
@@ -129,7 +128,7 @@ public class AggregateTest extends SimpleDbTestBase {
         Aggregator.Op.SUM);
     op.open();
     sumstring.open();
-    TestUtil.matchAllTuples(sumstring, op);
+    TestUtil.matchAllRows(sumstring, op);
   }
 
   /**
@@ -140,7 +139,7 @@ public class AggregateTest extends SimpleDbTestBase {
         Aggregator.Op.SUM);
     op.open();
     sum.open();
-    TestUtil.matchAllTuples(sum, op);
+    TestUtil.matchAllRows(sum, op);
   }
 
   /**
@@ -151,7 +150,7 @@ public class AggregateTest extends SimpleDbTestBase {
        Aggregator.Op.AVG);
     op.open();
     avg.open();
-    TestUtil.matchAllTuples(avg, op);
+    TestUtil.matchAllRows(avg, op);
   }
 
   /**
@@ -162,7 +161,7 @@ public class AggregateTest extends SimpleDbTestBase {
         Aggregator.Op.MAX);
     op.open();
     max.open();
-    TestUtil.matchAllTuples(max, op);
+    TestUtil.matchAllRows(max, op);
   }
 
   /**
@@ -173,7 +172,7 @@ public class AggregateTest extends SimpleDbTestBase {
        Aggregator.Op.MIN);
     op.open();
     min.open();
-    TestUtil.matchAllTuples(min, op);
+    TestUtil.matchAllRows(min, op);
   }
 
   /**

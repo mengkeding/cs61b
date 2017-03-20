@@ -1,4 +1,4 @@
-package simpledb;
+package db;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -8,9 +8,8 @@ import junit.framework.JUnit4TestAdapter;
 import org.junit.Before;
 import org.junit.Test;
 
-import simpledb.systemtest.SimpleDbTestBase;
 
-public class JoinTest extends SimpleDbTestBase {
+public class JoinTest extends DbTestBase {
 
   int width1 = 2;
   int width2 = 3;
@@ -22,23 +21,23 @@ public class JoinTest extends SimpleDbTestBase {
   /**
    * Initialize each unit test
    */
-  @Before public void createTupleLists() throws Exception {
-    this.scan1 = TestUtil.createTupleList(width1,
+  @Before public void createRowLists() throws Exception {
+    this.scan1 = TestUtil.createRowList(width1,
         new int[] { 1, 2,
                     3, 4,
                     5, 6,
                     7, 8 });
-    this.scan2 = TestUtil.createTupleList(width2,
+    this.scan2 = TestUtil.createRowList(width2,
         new int[] { 1, 2, 3,
                     2, 3, 4,
                     3, 4, 5,
                     4, 5, 6,
                     5, 6, 7 });
-    this.eqJoin = TestUtil.createTupleList(width1 + width2,
+    this.eqJoin = TestUtil.createRowList(width1 + width2,
         new int[] { 1, 2, 1, 2, 3,
                     3, 4, 3, 4, 5,
                     5, 6, 5, 6, 7 });
-    this.gtJoin = TestUtil.createTupleList(width1 + width2,
+    this.gtJoin = TestUtil.createRowList(width1 + width2,
         new int[] {
                     3, 4, 1, 2, 3, // 1, 2 < 3
                     3, 4, 2, 3, 4,
@@ -54,13 +53,13 @@ public class JoinTest extends SimpleDbTestBase {
   }
 
   /**
-   * Unit test for Join.getTupleDesc()
+   * Unit test for Join.getRowDesc()
    */
-  @Test public void getTupleDesc() {
+  @Test public void getRowDesc() {
     JoinPredicate pred = new JoinPredicate(0, Predicate.Op.EQUALS, 0);
     Join op = new Join(pred, scan1, scan2);
-    TupleDesc expected = Utility.getTupleDesc(width1 + width2);
-    TupleDesc actual = op.getTupleDesc();
+    RowDesc expected = Utility.getRowDesc(width1 + width2);
+    RowDesc actual = op.getRowDesc();
     assertEquals(expected, actual);
   }
 
@@ -78,9 +77,9 @@ public class JoinTest extends SimpleDbTestBase {
     op.rewind();
 
     eqJoin.open();
-    Tuple expected = eqJoin.next();
-    Tuple actual = op.next();
-    assertTrue(TestUtil.compareTuples(expected, actual));
+    Row expected = eqJoin.next();
+    Row actual = op.next();
+    assertTrue(TestUtil.compareRows(expected, actual));
   }
 
   /**
@@ -91,7 +90,7 @@ public class JoinTest extends SimpleDbTestBase {
     Join op = new Join(pred, scan1, scan2);
     op.open();
     gtJoin.open();
-    TestUtil.matchAllTuples(gtJoin, op);
+    TestUtil.matchAllRows(gtJoin, op);
   }
 
   /**
@@ -102,7 +101,7 @@ public class JoinTest extends SimpleDbTestBase {
     Join op = new Join(pred, scan1, scan2);
     op.open();
     eqJoin.open();
-    TestUtil.matchAllTuples(eqJoin, op);
+    TestUtil.matchAllRows(eqJoin, op);
   }
 
   /**

@@ -1,4 +1,4 @@
-package simpledb.systemtest;
+package db;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -10,7 +10,7 @@ import org.junit.Test;
 
 import simpledb.*;
 
-public abstract class FilterBase extends SimpleDbTestBase {
+public abstract class FilterBase extends DbTestBase {
     private static final int COLUMNS = 3;
     private static final int ROWS = 1097;
 
@@ -36,14 +36,14 @@ public abstract class FilterBase extends SimpleDbTestBase {
             Predicate.Op operation) throws IOException, DbException, TransactionAbortedException {
         // Test the true value
         HeapFile f = createTable(column, columnValue);
-        Predicate predicate = new Predicate(column, operation, new IntField(trueValue));
+        Predicate predicate = new Predicate(column, operation, new IntColumn(trueValue));
         assertEquals(ROWS, runTransactionForPredicate(f, predicate));
         f = Utility.openHeapFile(COLUMNS, f.getFile());
         validateAfter(f);
 
         // Test the false value
         f = createTable(column, columnValue);
-        predicate = new Predicate(column, operation, new IntField(falseValue));
+        predicate = new Predicate(column, operation, new IntColumn(falseValue));
         assertEquals(0, runTransactionForPredicate(f, predicate));
         f = Utility.openHeapFile(COLUMNS, f.getFile());
         validateAfter(f);

@@ -1,4 +1,4 @@
-package simpledb;
+package db;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -21,7 +21,7 @@ public class InsertTest extends TestUtil.CreateHeapFile {
    */
   @Before public void setUp() throws Exception {
     super.setUp();
-    this.scan1 = TestUtil.createTupleList(2,
+    this.scan1 = TestUtil.createRowList(2,
         new int[] { 1, 2,
                     1, 4,
                     1, 6,
@@ -33,12 +33,12 @@ public class InsertTest extends TestUtil.CreateHeapFile {
   }
 
   /**
-   * Unit test for Insert.getTupleDesc()
+   * Unit test for Insert.getRowDesc()
    */
-  @Test public void getTupleDesc() throws Exception {
+  @Test public void getRowDesc() throws Exception {
     Insert op = new Insert(tid,scan1, empty.getId());
-    TupleDesc expected = Utility.getTupleDesc(1);
-    TupleDesc actual = op.getTupleDesc();
+    RowDesc expected = Utility.getRowDesc(1);
+    RowDesc actual = op.getRowDesc();
     assertEquals(expected, actual);
   }
 
@@ -48,8 +48,8 @@ public class InsertTest extends TestUtil.CreateHeapFile {
   @Test public void getNext() throws Exception {
     Insert op = new Insert(tid,scan1, empty.getId());
     op.open();
-    assertTrue(TestUtil.compareTuples(
-        Utility.getHeapTuple(7, 1), // the length of scan1
+    assertTrue(TestUtil.compareRows(
+        Utility.getHeapRow(7, 1), // the length of scan1
         op.next()));
 
     // we should fit on one page

@@ -1,4 +1,4 @@
-package simpledb;
+package db;
 
 import java.util.*;
 
@@ -9,40 +9,40 @@ public class Project extends Operator {
 
     private static final long serialVersionUID = 1L;
     private DbIterator child;
-    private TupleDesc td;
-    private ArrayList<Integer> outFieldIds;
+    private RowDesc rd;
+    private ArrayList<Integer> outColumnIds;
 
     /**
-     * Constructor accepts a child operator to read tuples to apply projection
-     * to and a list of fields in output tuple
+     * Constructor accepts a child operator to read Rows to apply projection
+     * to and a list of Columns in output Row
      * 
-     * @param fieldList
-     *            The ids of the fields child's tupleDesc to project out
+     * @param ColumnList
+     *            The ids of the Columns child's RowDesc to project out
      * @param typesList
-     *            the types of the fields in the final projection
+     *            the types of the Columns in the final projection
      * @param child
      *            The child operator
      */
-    public Project(ArrayList<Integer> fieldList, ArrayList<Type> typesList,
+    public Project(ArrayList<Integer> ColumnList, ArrayList<Type> typesList,
             DbIterator child) {
-        this(fieldList,typesList.toArray(new Type[]{}),child);
+        this(ColumnList,typesList.toArray(new Type[]{}),child);
     }
     
-    public Project(ArrayList<Integer> fieldList, Type[] types,
+    public Project(ArrayList<Integer> ColumnList, Type[] types,
             DbIterator child) {
         this.child = child;
-        outFieldIds = fieldList;
-        String[] fieldAr = new String[fieldList.size()];
-        TupleDesc childtd = child.getTupleDesc();
+        outColumnIds = ColumnList;
+        String[] ColumnAr = new String[ColumnList.size()];
+        RowDesc childrd = child.getRowDesc();
 
-        for (int i = 0; i < fieldAr.length; i++) {
-            fieldAr[i] = childtd.getFieldName(fieldList.get(i));
+        for (int i = 0; i < ColumnAr.length; i++) {
+            ColumnAr[i] = childrd.getColumnName(ColumnList.get(i));
         }
-        td = new TupleDesc(types, fieldAr);
+        rd = new RowDesc(types, ColumnAr);
     }
 
-    public TupleDesc getTupleDesc() {
-        return td;
+    public RowDesc getRowDesc() {
+        return rd;
     }
 
     public void open() throws DbException, NoSuchElementException,
@@ -61,21 +61,21 @@ public class Project extends Operator {
     }
 
     /**
-     * Operator.fetchNext implementation. Iterates over tuples from the child
-     * operator, projecting out the fields from the tuple
+     * Operator.fetchNext implementation. Iterates over Rows from the child
+     * operator, projecting out the Columns from the Row.
      * 
-     * @return The next tuple, or null if there are no more tuples
+     * @return The next Row, or null if there are no more Rows
      */
-    protected Tuple fetchNext() throws NoSuchElementException,
+    protected Row fetchNext() throws NoSuchElementException,
             TransactionAbortedException, DbException {
         while (child.hasNext()) {
-            Tuple t = child.next();
-            Tuple newTuple = new Tuple(td);
-            newTuple.setRecordId(t.getRecordId());
-            for (int i = 0; i < td.numFields(); i++) {
-                newTuple.setField(i, t.getField(outFieldIds.get(i)));
+            Row t = child.next();
+            Row newRow = new Row(rd);
+            newRow.setRowId(t.getRowId());
+            for (int i = 0; i < rd.numColumns(); i++) {
+                newRow.setColumn(i, t.getColumn(outColumnIds.get(i)));
             }
-            return newTuple;
+            return newRow;
         }
         return null;
     }

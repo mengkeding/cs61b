@@ -1,4 +1,4 @@
-package simpledb;
+package db;
 
 import java.util.*;
 
@@ -14,58 +14,58 @@ public class Aggregate extends Operator {
     /**
      * Constructor.
      * 
-     * Implementation hint: depending on the type of afield, you will want to
+     * Implementation hint: depending on the type of aColumn, you will want to
      * construct an {@link IntAggregator} or {@link StringAggregator} to help
      * you with your implementation of readNext().
      * 
      * 
      * @param child
-     *            The DbIterator that is feeding us tuples.
-     * @param afield
+     *            The DbIterator that is feeding us Rows.
+     * @param aColumn
      *            The column over which we are computing an aggregate.
-     * @param gfield
+     * @param gColumn
      *            The column over which we are grouping the result, or -1 if
      *            there is no grouping
      * @param aop
      *            The aggregation operator to use
      */
-    public Aggregate(DbIterator child, int afield, int gfield, Aggregator.Op aop) {
+    public Aggregate(DbIterator child, int aColumn, int gColumn, Aggregator.Op aop) {
 	// some code goes here
     }
 
     /**
      * @return If this aggregate is accompanied by a groupby, return the groupby
-     *         field index in the <b>INPUT</b> tuples. If not, return
-     *         {@link simpledb.Aggregator#NO_GROUPING}
+     *         Column index in the <b>INPUT</b> Rows. If not, return
+     *         {@link db.Aggregator#NO_GROUPING}
      * */
-    public int groupField() {
+    public int groupColumn() {
 	// some code goes here
 	return -1;
     }
 
     /**
      * @return If this aggregate is accompanied by a group by, return the name
-     *         of the groupby field in the <b>OUTPUT</b> tuples If not, return
+     *         of the groupby Column in the <b>OUTPUT</b> Rows If not, return
      *         null;
      * */
-    public String groupFieldName() {
+    public String groupColumnName() {
 	// some code goes here
 	return null;
     }
 
     /**
-     * @return the aggregate field
+     * @return the aggregate Column
      * */
-    public int aggregateField() {
+    public int aggregateColumn() {
 	// some code goes here
 	return -1;
     }
 
     /**
-     * @return return the name of the aggregate field in the <b>OUTPUT</b>
-     *         tuples
+     * @return return the name of the aggregate Column in the <b>OUTPUT</b>
+     *         Rows
      * */
-    public String aggregateFieldName() {
+    public String aggregateColumnName() {
 	// some code goes here
 	return null;
     }
@@ -88,13 +88,13 @@ public class Aggregate extends Operator {
     }
 
     /**
-     * Returns the next tuple. If there is a group by field, then the first
-     * field is the field by which we are grouping, and the second field is the
-     * result of computing the aggregate, If there is no group by field, then
-     * the result tuple should contain one field representing the result of the
-     * aggregate. Should return null if there are no more tuples.
+     * Returns the next Row. If there is a group by Column, then the first
+     * Column is the Column by which we are grouping, and the second Column is the
+     * result of computing the aggregate, If there is no group by Column, then
+     * the result Row should contain one Column representing the result of the
+     * aggregate. Should return null if there are no more Rows.
      */
-    protected Tuple fetchNext() throws TransactionAbortedException, DbException {
+    protected Row fetchNext() throws TransactionAbortedException, DbException {
 	// some code goes here
 	return null;
     }
@@ -104,17 +104,17 @@ public class Aggregate extends Operator {
     }
 
     /**
-     * Returns the TupleDesc of this Aggregate. If there is no group by field,
-     * this will have one field - the aggregate column. If there is a group by
-     * field, the first field will be the group by field, and the second will be
+     * Returns the RowDesc of this Aggregate. If there is no group by Column,
+     * this will have one Column - the aggregate column. If there is a group by
+     * Column, the first Column will be the group by Column, and the second will be
      * the aggregate value column.
      * 
      * The name of an aggregate column should be informative. For example:
-     * "aggName(aop) (child_td.getFieldName(afield))" where aop and afield are
-     * given in the constructor, and child_td is the TupleDesc of the child
+     * "aggName(aop) (child_td.getColumnName(aColumn))" where aop and aColumn are
+     * given in the constructor, and child_td is the RowDesc of the child
      * iterator.
      */
-    public TupleDesc getTupleDesc() {
+    public RowDesc getRowDesc() {
 	// some code goes here
 	return null;
     }

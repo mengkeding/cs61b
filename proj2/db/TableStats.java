@@ -1,4 +1,4 @@
-package simpledb;
+package db;
 
 import java.util.HashMap;
 import java.util.Iterator;
@@ -146,7 +146,7 @@ public class TableStats {
      * @return The estimated selectivity (fraction of tuples that satisfy) the
      *         predicate
      */
-    public double estimateSelectivity(int field, Predicate.Op op, Field constant) {
+    public double estimateSelectivity(int field, Predicate.Op op, Column constant) {
         // some code goes here
         return 1.0;
     }

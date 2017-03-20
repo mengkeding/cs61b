@@ -1,4 +1,4 @@
-package simpledb;
+package db;
 
 import java.util.NoSuchElementException;
 
@@ -20,7 +20,7 @@ public abstract class Operator implements DbIterator {
         return next != null;
     }
 
-    public Tuple next() throws DbException, TransactionAbortedException,
+    public Row next() throws DbException, TransactionAbortedException,
             NoSuchElementException {
         if (next == null) {
             next = fetchNext();
@@ -28,20 +28,20 @@ public abstract class Operator implements DbIterator {
                 throw new NoSuchElementException();
         }
 
-        Tuple result = next;
+        Row result = next;
         next = null;
         return result;
     }
 
     /**
-     * Returns the next Tuple in the iterator, or null if the iteration is
+     * Returns the next Row in the iterator, or null if the iteration is
      * finished. Operator uses this method to implement both <code>next</code>
      * and <code>hasNext</code>.
      * 
-     * @return the next Tuple in the iterator, or null if the iteration is
+     * @return the next Row in the iterator, or null if the iteration is
      *         finished.
      */
-    protected abstract Tuple fetchNext() throws DbException,
+    protected abstract Row fetchNext() throws DbException,
             TransactionAbortedException;
 
     /**
@@ -54,7 +54,7 @@ public abstract class Operator implements DbIterator {
         this.open = false;
     }
 
-    private Tuple next = null;
+    private Row next = null;
     private boolean open = false;
     private int estimatedCardinality = 0;
 
@@ -83,9 +83,9 @@ public abstract class Operator implements DbIterator {
     public abstract void setChildren(DbIterator[] children);
 
     /**
-     * @return return the TupleDesc of the output tuples of this operator
+     * @return return the RowDesc of the output Rows of this operator
      * */
-    public abstract TupleDesc getTupleDesc();
+    public abstract RowDesc getRowDesc();
 
     /**
      * @return The estimated cardinality of this operator. Will only be used in

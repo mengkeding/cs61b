@@ -1,9 +1,9 @@
-package simpledb;
+package db;
 
 import java.io.IOException;
 
 /**
- * The delete operator. Delete reads tuples from its child operator and removes
+ * The delete operator. Delete reads Rows from its child operator and removes
  * them from the table they belong to.
  */
 public class Delete extends Operator {
@@ -17,13 +17,13 @@ public class Delete extends Operator {
      * @param t
      *            The transaction this delete runs in
      * @param child
-     *            The child operator from which to read tuples for deletion
+     *            The child operator from which to read Rows for deletion
      */
     public Delete(TransactionId t, DbIterator child) {
         // some code goes here
     }
 
-    public TupleDesc getTupleDesc() {
+    public RowDesc getRowDesc() {
         // some code goes here
         return null;
     }
@@ -41,15 +41,15 @@ public class Delete extends Operator {
     }
 
     /**
-     * Deletes tuples as they are read from the child operator. Deletes are
+     * Deletes Rows as they are read from the child operator. Deletes are
      * processed via the buffer pool (which can be accessed via the
      * Database.getBufferPool() method.
      * 
-     * @return A 1-field tuple containing the number of deleted records.
+     * @return A 1-field Row containing the number of deleted records.
      * @see Database#getBufferPool
-     * @see BufferPool#deleteTuple
+     * @see BufferPool#deleteRow
      */
-    protected Tuple fetchNext() throws TransactionAbortedException, DbException {
+    protected Row fetchNext() throws TransactionAbortedException, DbException {
         // some code goes here
         return null;
     }

@@ -1,4 +1,4 @@
-package simpledb;
+package db;
 
 /** A LogicalFilterNode represents the parameters of a filter in the WHERE clause of a query. 
     <p>

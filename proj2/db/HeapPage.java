@@ -18,7 +18,6 @@ public class HeapPage implements Page {
     byte[] header;
     Row[] rows;
     int numSlots;
-
     byte[] oldData;
 
 
@@ -232,13 +231,33 @@ public class HeapPage implements Page {
     /**
      * Delete the specified Row from the page;  the Row should be updated to reflect
      *   that it is no longer stored on any page.
+     *
+     *   rows包含了RowId,它可以帮你找到他们所在的页，所以deleteRow其实很简单，
+     *   只需要找到一行所属的那一page，然后恰当修改这个page的headers
+     *
+     *   要实现HeapPage,你需要修改insertRow()和deleteRow()等方法的header bitmap.
+     *   你可能会发现我们在Lab 1让你实现的getNumEmptySlots()和 isSlotUsed()现在能给你一些提示。
+     *   注意到有一个markSlotUsed方法用来修改page header里一个row是被填满了还是空的状态。
+     *
      * @throws DbException if this Row is not on this page, or Row slot is
      *         already empty.
-     * @param t The Row to delete
+     * @param r The Row to delete
      */
-    public void deleteRow(Row t) throws DbException {
+    public void deleteRow(Row r) throws DbException {
         // some code goes here
         // not necessary for lab1
+        PageId pageId = r.getRowId().getPageId();
+        int rowNum = r.getRowId().rowNo();
+        if(pageId.getTableId() != pid.getTableId() || pageId.pageNumber()!= pid.pageNumber()){
+            throw new DbException("this Row is not on this page");
+        }
+        if(!isSlotUsed(rowNum)){
+            throw new DbException("Row slot is already empty");
+        }
+        markSlotUsed(rowNum,false);
+        int numEmptySlots = getNumEmptySlots();
+        numEmptySlots += 1;
+
     }
 
     /**
@@ -246,11 +265,23 @@ public class HeapPage implements Page {
      *  that it is now stored on this page.
      * @throws DbException if the page is full (no empty slots) or Rowdesc
      *         is mismatch.
-     * @param t The Row to add.
+     * @param r The Row to add.
      */
-    public void insertRow(Row t) throws DbException {
+    public void insertRow(Row r) throws DbException {
         // some code goes here
         // not necessary for lab1
+        if(getNumEmptySlots() == 0){
+            throw new DbException("the page is full(no empty slots)");
+        }
+        RowDesc newrd = r.getRowDesc();
+        if(newrd != rd){
+            throw new DbException("RowDesc is mismatch");
+        }
+        int RowNum = numSlots - getNumEmptySlots();
+        markSlotUsed(RowNum,true);
+        int numEmptySlots = getNumEmptySlots();
+        numEmptySlots -= 1;
+
     }
 
     /**
@@ -326,6 +357,8 @@ public class HeapPage implements Page {
     private void markSlotUsed(int i, boolean value) {
         // some code goes here
         // not necessary for lab1
+        boolean isSlotUsed = isSlotUsed(i);
+        isSlotUsed = value;
     }
 
     /**

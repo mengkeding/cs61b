@@ -7,9 +7,15 @@ package db;
 import java.io.Serializable;
 
 /**
- * Predicate compares tuples to a specified Column value.
+ * Predicate compares rows to a specified Column value.
  */
 public class Predicate implements Serializable {
+
+    private int columnNum;
+    private Op op;
+    private Column operand;
+
+
 
     private static final long serialVersionUID = 1L;
 
@@ -41,7 +47,7 @@ public class Predicate implements Serializable {
 
         public String toString() {
             if (this == EQUALS)
-                return "=";
+                return "==";
             if (this == GREATER_THAN)
                 return ">";
             if (this == LESS_THAN)
@@ -53,7 +59,7 @@ public class Predicate implements Serializable {
             if (this == LIKE)
                 return "like";
             if (this == NOT_EQUALS)
-                return "<>";
+                return "!=";
             throw new IllegalStateException("impossible to reach here");
         }
     }
@@ -62,14 +68,17 @@ public class Predicate implements Serializable {
      * Constructor.
      *
      * @param Column
-     *            Column number of passed in tuples to compare against.
+     *            Column number of passed in rows to compare against.
      * @param op
      *            operation to use for comparison
      * @param operand
-     *            Column value to compare passed in tuples to
+     *            Column value to compare passed in rows to
      */
     public Predicate(int Column, Op op, Column operand) {
         // some code goes here
+        this.columnNum = Column;
+        this.op = op;
+        this.operand = operand;
     }
 
     /**
@@ -78,7 +87,7 @@ public class Predicate implements Serializable {
     public int getColumn()
     {
         // some code goes here
-        return -1;
+        return this.columnNum;
     }
 
     /**
@@ -87,7 +96,7 @@ public class Predicate implements Serializable {
     public Op getOp()
     {
         // some code goes here
-        return null;
+        return this.op;
     }
 
     /**
@@ -96,30 +105,51 @@ public class Predicate implements Serializable {
     public Column getOperand()
     {
         // some code goes here
-        return null;
+        return this.operand;
     }
 
+
+
     /**
-     * Compares the Column number of t specified in the constructor to the
+     * Compares the Column number of r specified in the constructor to the
      * operand Column specified in the constructor using the operator specific in
      * the constructor. The comparison can be made through Column's compare
      * method.
      *
-     * @param t
-     *            The tuple to compare against
+     * @param r
+     *            The row to compare against
      * @return true if the comparison is true, false otherwise.
      */
     public boolean filter(Row r) {
         // some code goes here
-        return false;
+        return r.getColumn(this.columnNum).compare(op, this.operand);
     }
 
+    //compare method in Column:
     /**
-     * Returns something useful, like "f = Column_id op = op_string operand =
+     * Compare the value of this column object to the passed in value.
+     * @param op The operator
+     * @param value The value to compare this column to
+     * @return Whether or not the comparison yields true.
+     */
+    //boolean compare(Predicate.Op op, Column value);
+
+
+
+
+    /**
+     * Returns something useful, like "c = column_id op = op_string operand =
      * operand_string
      */
     public String toString() {
         // some code goes here
-        return "";
+        StringBuilder sb = new StringBuilder();
+        sb.append("c = ");
+        sb.append(this.columnNum);
+        sb.append(" op = ");
+        sb.append(this.op.toString());
+        sb.append(" operand = ");
+        sb.append(this.operand.toString());
+        return sb.toString();
     }
 }

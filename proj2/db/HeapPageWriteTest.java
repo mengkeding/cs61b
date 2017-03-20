@@ -1,4 +1,4 @@
-package simpledb;
+package db;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -14,11 +14,9 @@ import junit.framework.JUnit4TestAdapter;
 import org.junit.Before;
 import org.junit.Test;
 
-import simpledb.TestUtil.SkeletonFile;
-import simpledb.systemtest.SimpleDbTestBase;
-import simpledb.systemtest.SystemTestUtil;
 
-public class HeapPageWriteTest extends SimpleDbTestBase {
+
+public class HeapPageWriteTest extends DbTestBase {
     private HeapPageId pid;
     
     public static final int[][] EXAMPLE_VALUES = new int[][] {
@@ -48,12 +46,12 @@ public class HeapPageWriteTest extends SimpleDbTestBase {
     static {
         // Build the input table
         ArrayList<ArrayList<Integer>> table = new ArrayList<ArrayList<Integer>>();
-        for (int[] tuple : EXAMPLE_VALUES) {
-            ArrayList<Integer> listTuple = new ArrayList<Integer>();
-            for (int value : tuple) {
-                listTuple.add(value);
+        for (int[] Row : EXAMPLE_VALUES) {
+            ArrayList<Integer> listRow = new ArrayList<Integer>();
+            for (int value : Row) {
+                listRow.add(value);
             }
-            table.add(listTuple);
+            table.add(listRow);
         }
 
         // Convert it to a HeapFile and read in the bytes
@@ -72,7 +70,7 @@ public class HeapPageWriteTest extends SimpleDbTestBase {
      */
     @Before public void addTable() throws IOException {
         this.pid = new HeapPageId(-1, -1);
-        Database.getCatalog().addTable(new SkeletonFile(-1, Utility.getTupleDesc(2)), SystemTestUtil.getUUID());
+        Database.getCatalog().addTable(new TestUtil.SkeletonFile(-1, Utility.getRowDesc(2)), SystemTestUtil.getUUID());
     }
     
     /**
@@ -92,9 +90,9 @@ public class HeapPageWriteTest extends SimpleDbTestBase {
     }
 
     /**
-     * Unit test for HeapPage.addTuple()
+     * Unit test for HeapPage.addRow()
      */
-    @Test public void addTuple() throws Exception {
+    @Test public void addRow() throws Exception {
         HeapPage page = new HeapPage(pid, HeapPageWriteTest.EXAMPLE_DATA);
         int free = page.getNumEmptySlots();
 
@@ -102,21 +100,21 @@ public class HeapPageWriteTest extends SimpleDbTestBase {
         // shouldn't make a difference for n = 504 slots.
 
         for (int i = 0; i < free; ++i) {
-            Tuple addition = Utility.getHeapTuple(i, 2);
-            page.insertTuple(addition);
+            Row addition = Utility.getHeapRow(i, 2);
+            page.insertRow(addition);
             assertEquals(free-i-1, page.getNumEmptySlots());
 
-            // loop through the iterator to ensure that the tuple actually exists
+            // loop through the iterator to ensure that the Row actually exists
             // on the page
-            Iterator<Tuple >it = page.iterator();
+            Iterator<Row >it = page.iterator();
             boolean found = false;
             while (it.hasNext()) {
-                Tuple tup = it.next();
-                if (TestUtil.compareTuples(addition, tup)) {
+                Row tup = it.next();
+                if (TestUtil.compareRows(addition, tup)) {
                     found = true;
 
-                    // verify that the RecordId is sane
-                    assertEquals(page.getId(), tup.getRecordId().getPageId());
+                    // verify that the RowId is sane
+                    assertEquals(page.getId(), tup.getRowId().getPageId());
                     break;
                 }
             }
@@ -125,7 +123,7 @@ public class HeapPageWriteTest extends SimpleDbTestBase {
 
         // now, the page should be full.
         try {
-            page.insertTuple(Utility.getHeapTuple(0, 2));
+            page.insertRow(Utility.getHeapRow(0, 2));
             throw new Exception("page should be full; expected DbException");
         } catch (DbException e) {
             // explicitly ignored
@@ -133,40 +131,40 @@ public class HeapPageWriteTest extends SimpleDbTestBase {
     }
 
     /**
-     * Unit test for HeapPage.deleteTuple() with false tuples
+     * Unit test for HeapPage.deleteRow() with false Rows
      */
     @Test(expected=DbException.class)
-        public void deleteNonexistentTuple() throws Exception {
+        public void deleteNonexistentRow() throws Exception {
         HeapPage page = new HeapPage(pid, HeapPageWriteTest.EXAMPLE_DATA);
-        page.deleteTuple(Utility.getHeapTuple(2, 2));
+        page.deleteRow(Utility.getHeapRow(2, 2));
     }
 
     /**
-     * Unit test for HeapPage.deleteTuple()
+     * Unit test for HeapPage.deleteRow()
      */
-    @Test public void deleteTuple() throws Exception {
+    @Test public void deleteRow() throws Exception {
         HeapPage page = new HeapPage(pid, HeapPageWriteTest.EXAMPLE_DATA);
         int free = page.getNumEmptySlots();
 
-        // first, build a list of the tuples on the page.
-        Iterator<Tuple> it = page.iterator();
-        LinkedList<Tuple> tuples = new LinkedList<Tuple>();
+        // first, build a list of the Rows on the page.
+        Iterator<Row> it = page.iterator();
+        LinkedList<Row> Rows = new LinkedList<Row>();
         while (it.hasNext())
-            tuples.add(it.next());
-        Tuple first = tuples.getFirst();
+            Rows.add(it.next());
+        Row first = Rows.getFirst();
 
         // now, delete them one-by-one from both the front and the end.
         int deleted = 0;
-        while (tuples.size() > 0) {
-            page.deleteTuple(tuples.removeFirst());
-            page.deleteTuple(tuples.removeLast());
+        while (Rows.size() > 0) {
+            page.deleteRow(Rows.removeFirst());
+            page.deleteRow(Rows.removeLast());
             deleted += 2;
             assertEquals(free + deleted, page.getNumEmptySlots());
         }
 
         // now, the page should be empty.
         try {
-            page.deleteTuple(first);
+            page.deleteRow(first);
             throw new Exception("page should be empty; expected DbException");
         } catch (DbException e) {
             // explicitly ignored
