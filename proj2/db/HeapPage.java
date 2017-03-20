@@ -268,6 +268,9 @@ public class HeapPage implements Page {
      * @throws DbException if the page is full (no empty slots) or Rowdesc
      *         is mismatch.
      * @param r The Row to add.
+     * 注意：所有的slots并不是依次序被used,所以used和unused的slots是混淆无序排列的，
+     * 因此Insert一个row的时候并不是从这一页最后一行used row的下一行开始insert的，而是遍历
+     * 所有的slots,找到那些empty slots来插入这行.
      */
     public void insertRow(Row r) throws DbException {
         // some code goes here
@@ -279,11 +282,23 @@ public class HeapPage implements Page {
         if(newrd != rd){
             throw new DbException("RowDesc is mismatch");
         }
-        int RowNum = numSlots - getNumEmptySlots();
-        markSlotUsed(RowNum,true);
-        int numEmptySlots = getNumEmptySlots();
-        numEmptySlots -= 1;
-
+        int freeSlotNum = -1;
+        boolean freeSlotFound = false;
+        for(int i = 0; i < header.length; i++){
+            for(int bitNum = 0; bitNum < 8; bitNum++){
+                freeSlotNum = 8*i + bitNum;
+                if(!isSlotUsed(freeSlotNum)){
+                    freeSlotFound = true;
+                    break;
+                }
+            }
+            if(freeSlotFound){
+                break;
+            }
+        }
+        r.setRowId(new RowId(pid,freeSlotNum));
+        rows[freeSlotNum] = r;
+        markSlotUsed(freeSlotNum,true);
     }
 
 
@@ -314,7 +329,9 @@ public class HeapPage implements Page {
         // some code goes here
         // not necessary for lab1
         isDirtyPage = dirty;
-        lastDirtied = tid;
+        if(isDirtyPage){
+            lastDirtied = tid;
+        }
     }
 
     /**
@@ -381,12 +398,23 @@ public class HeapPage implements Page {
 
     /**
      * Abstraction to fill or clear a slot on this page.
+     * This method set the bit in the ith slot to be 1 or 0 when the slot is used or unused.
+     * markSlotUsed方法用来修改page header里一个row是被填满了还是空的状态。
      */
     private void markSlotUsed(int i, boolean value) {
         // some code goes here
-        // not necessary for lab1
-        boolean isSlotUsed = isSlotUsed(i);
-        isSlotUsed = value;
+        // not necessary for lab 1
+        int byteIndex = i / 8;
+        int bitIndex = i % 8; // is the first bit in a byte (index 0) ignored?
+        if(value == true){
+            //slot used
+            //cant think up this myself. but i test it on paper and it was correct.
+            //ignore the (byte) first when test it on paper.
+            header[byteIndex] =(byte) (header[byteIndex] | (1 << bitIndex)) ;
+        }else{
+            //slot unused
+            header[byteIndex] = (byte) (header[byteIndex] & (~(1 << bitIndex)));
+        }
     }
 
     /**
