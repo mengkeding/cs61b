@@ -19,6 +19,8 @@ public class HeapPage implements Page {
     Row[] rows;
     int numSlots;
     byte[] oldData;
+    boolean isDirtyPage;
+    TransactionId lastDirtied;
 
 
     /**
@@ -248,7 +250,7 @@ public class HeapPage implements Page {
         // not necessary for lab1
         PageId pageId = r.getRowId().getPageId();
         int rowNum = r.getRowId().rowNo();
-        if(pageId.getTableId() != pid.getTableId() || pageId.pageNumber()!= pid.pageNumber()){
+        if(pageId != pid){
             throw new DbException("this Row is not on this page");
         }
         if(!isSlotUsed(rowNum)){
@@ -284,6 +286,26 @@ public class HeapPage implements Page {
 
     }
 
+
+
+//    Javadoc from parent class Page:
+
+//    /**
+//     * Get the id of the transaction that last dirtied this page, or null if the page is clean..
+//     *
+//     * @return The id of the transaction that last dirtied this page, or null
+//     */
+//    public TransactionId isDirty();
+//
+//    /**
+//     * Set the dirty state of this page as dirtied by a particular transaction
+//     */
+//    public void markDirty(boolean dirty, TransactionId tid);
+
+
+
+
+
     /**
      * Marks this page as dirty/not dirty and Row that transaction
      * that did the dirtying
@@ -291,6 +313,8 @@ public class HeapPage implements Page {
     public void markDirty(boolean dirty, TransactionId tid) {
         // some code goes here
         // not necessary for lab1
+        isDirtyPage = dirty;
+        lastDirtied = tid;
     }
 
     /**
@@ -299,7 +323,11 @@ public class HeapPage implements Page {
     public TransactionId isDirty() {
         // some code goes here
         // Not necessary for lab1
-        return null;
+        if(!isDirtyPage){
+            return null;
+        }else{
+            return lastDirtied;
+        }
     }
 
 
