@@ -171,9 +171,9 @@ public class BufferPool {
      *
      * @param tid the transaction adding the Row
      * @param tableId the table to add the Row to
-     * @param t the Row to add
+     * @param r the Row to add
      */
-    public void insertRow(TransactionId tid, int tableId, Row t)
+    public void insertRow(TransactionId tid, int tableId, Row r)
             throws DbException, IOException, TransactionAbortedException {
         // some code goes here
         // not necessary for proj1
@@ -190,9 +190,9 @@ public class BufferPool {
      * (note difference from addRow).
      *
      * @param tid the transaction adding the Row.
-     * @param t the Row to add
+     * @param r the Row to add
      */
-    public  void deleteRow(TransactionId tid, Row t)
+    public  void deleteRow(TransactionId tid, Row r)
             throws DbException, TransactionAbortedException {
         // some code goes here
         // not necessary for proj1

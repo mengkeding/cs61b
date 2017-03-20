@@ -123,20 +123,71 @@ public class HeapFile implements DbFile {
         return (int) Math.ceil(this.file.length() / BufferPool.PAGE_SIZE);
     }
 
-    // see DbFile.java for javadocs
-    public ArrayList<Page> insertRow(TransactionId tid, Row t)
+
+    /**
+     * Inserts the specified Row to the file on behalf of transaction.
+     * This method will acquire a lock on the affected pages of the file, and
+     * may block until the lock can be acquired.
+
+     * @param tid The transaction performing the update
+     * @param r The Row to add.  This Row should be updated to reflect that
+     *          it is now stored in this file.
+     * @return An ArrayList contain the pages that were modified
+     * @throws DbException if the Row cannot be added
+     * @throws IOException if the needed file can't be read/written
+     *
+     * 添加rows: HeapFile.java里的insertRow方法负责在一个heap file里添加一行。
+     * 要在一个HeapFile里添加一行，你需要找到一页有empty slot的page。
+     * 如果这个HeapFile里面没有这样的页，那你就要新建一个page然后设置它到磁盘上文件的路径。
+     * 你必须确保这个row的RowId被正确地更新。
+     */
+
+
+    public ArrayList<Page> insertRow(TransactionId tid, Row r)
             throws DbException, IOException, TransactionAbortedException {
         // some code goes here
-        return null;
         // not necessary for proj1
+        int numPages = numPages();
+        HeapPageId pid = new HeapPageId(getId(),numPages);
+        HeapPage pageToInsert = (HeapPage) Database.getBufferPool().getPage(tid,pid,Permissions.READ_WRITE);
+        if(pageToInsert.getNumEmptySlots() != 0){
+            pageToInsert.insertRow(r);
+        }else{
+            numPages += 1;
+            HeapPageId newpid = new HeapPageId(getId(),numPages);
+            RandomAccessFile f = new RandomAccessFile(this.file, "r");
+            int offset = BufferPool.PAGE_SIZE * newpid.pageNumber();
+            byte[] data = new byte[BufferPool.PAGE_SIZE];
+            HeapPage newpage = new HeapPage(newpid, data);
+            newpage.insertRow(r);
+
+        }
+
+
+
     }
 
+//
+//    /**
+//     * Removes the specifed Row from the file on behalf of the specified
+//     * transaction.
+//     * This method will acquire a lock on the affected pages of the file, and
+//     * may block until the lock can be acquired.
+//     *
+//     * @throws DbException if the Row cannot be deleted or is not a member
+//     *   of the file
+//     */
     // see DbFile.java for javadocs
-    public Page deleteRow(TransactionId tid, Row t) throws DbException,
+
+
+    public Page deleteRow(TransactionId tid, Row r) throws DbException,
             TransactionAbortedException {
         // some code goes here
-        return null;
         // not necessary for proj1
+        PageId pid = r.getRowId().getPageId();
+        HeapPage pageThisRowIn = (HeapPage) Database.getBufferPool().getPage(tid,pid,Permissions.READ_WRITE);
+        pageThisRowIn.deleteRow(r);
+        return pageThisRowIn;
     }
 
 
