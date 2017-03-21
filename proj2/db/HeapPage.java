@@ -249,17 +249,15 @@ public class HeapPage implements Page {
         // some code goes here
         // not necessary for lab1
         PageId pageId = r.getRowId().getPageId();
-        int rowNum = r.getRowId().rowNo();
+        int slotToEmpty = r.getRowId().rowNo();
         if(pageId != pid){
             throw new DbException("this Row is not on this page");
         }
-        if(!isSlotUsed(rowNum)){
+        if(!isSlotUsed(slotToEmpty)){
             throw new DbException("Row slot is already empty");
         }
-        markSlotUsed(rowNum,false);
-        int numEmptySlots = getNumEmptySlots();
-        numEmptySlots += 1;
-
+        markSlotUsed(slotToEmpty,false);
+        rows[slotToEmpty] = null;
     }
 
     /**
@@ -275,9 +273,6 @@ public class HeapPage implements Page {
     public void insertRow(Row r) throws DbException {
         // some code goes here
         // not necessary for lab1
-        if(getNumEmptySlots() == 0){
-            throw new DbException("the page is full(no empty slots)");
-        }
         RowDesc newrd = r.getRowDesc();
         if(newrd != rd){
             throw new DbException("RowDesc is mismatch");
@@ -295,6 +290,9 @@ public class HeapPage implements Page {
             if(freeSlotFound){
                 break;
             }
+        }
+        if(freeSlotNum == -1 || freeSlotFound == false){
+            throw new DbException("the page is full(no empty slots)");
         }
         r.setRowId(new RowId(pid,freeSlotNum));
         rows[freeSlotNum] = r;
