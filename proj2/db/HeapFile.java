@@ -108,10 +108,24 @@ public class HeapFile implements DbFile {
         return null;
     }
 
+
+    /**
+     * Push the specified page to disk.
+     *
+     * @param page The page to write.  page.getId().pageno() specifies the offset into the file where the page should be written.
+     * @throws IOException if the write fails
+     *
+     */
     // see DbFile.java for javadocs
     public void writePage(Page page) throws IOException {
         // some code goes here
         // not necessary for proj1
+        RandomAccessFile raf = new RandomAccessFile(this.file, "rw");
+        int offset = BufferPool.PAGE_SIZE * page.getId().pageNumber();
+        byte[] data = page.getPageData();
+        raf.seek(offset);
+        raf.write(data);
+        raf.close();
     }
 
     /**
@@ -140,6 +154,11 @@ public class HeapFile implements DbFile {
      * 要在一个HeapFile里添加一行，你需要找到一页有empty slot的page。
      * 如果这个HeapFile里面没有这样的页，那你就要新建一个page然后设置它到磁盘上文件的路径。
      * 你必须确保这个row的RowId被正确地更新。
+     *
+     * 注意，在HeapFile.insertTuple()和HeapFile.deleteTuple()里采用BufferPool.getPage() 方法
+     * 来访问pages是非常重要的。否则，在下一个lab里你的transactions实施起来可能出问题。
+     *
+     *
      */
 
 
@@ -147,24 +166,27 @@ public class HeapFile implements DbFile {
             throws DbException, IOException, TransactionAbortedException {
         // some code goes here
         // not necessary for proj1
-        int numPages = numPages();
-        HeapPageId pid = new HeapPageId(getId(),numPages);
-        HeapPage pageToInsert = (HeapPage) Database.getBufferPool().getPage(tid,pid,Permissions.READ_WRITE);
-        if(pageToInsert.getNumEmptySlots() != 0){
-            pageToInsert.insertRow(r);
-        }else{
-            numPages += 1;
-            HeapPageId newpid = new HeapPageId(getId(),numPages);
-            RandomAccessFile f = new RandomAccessFile(this.file, "r");
-            int offset = BufferPool.PAGE_SIZE * newpid.pageNumber();
-            byte[] data = new byte[BufferPool.PAGE_SIZE];
-            HeapPage newpage = new HeapPage(newpid, data);
-            newpage.insertRow(r);
-
+        ArrayList<Page> pageList = new ArrayList<>();
+        //look up all pages to find empty slot
+        for(int i = 0; i < numPages(); i++){
+            HeapPageId pid = new HeapPageId(getId(),i);
+            HeapPage hpPage = (HeapPage) Database.getBufferPool().getPage(tid,pid,Permissions.READ_WRITE);
+            if(hpPage.getNumEmptySlots() != 0){
+                hpPage.insertRow(r);
+                pageList.add(hpPage);
+                return pageList;
+            }
         }
-
-
-
+        //if there's no empty slot we add new page
+        HeapPageId newpid = new HeapPageId(getId(),numPages());
+        HeapPage newHpPage = new HeapPage(newpid,HeapPage.createEmptyPageData());
+        //write a empty page to file
+        writePage(newHpPage);
+        //access through bufferpool
+        HeapPage pageToInsert = (HeapPage) Database.getBufferPool().getPage(tid,newpid,Permissions.READ_WRITE);
+        pageToInsert.insertRow(r);
+        pageList.add(pageToInsert);
+        return pageList;
     }
 
 //
