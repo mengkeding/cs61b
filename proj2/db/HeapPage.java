@@ -274,7 +274,7 @@ public class HeapPage implements Page {
         // some code goes here
         // not necessary for lab1
         RowDesc newrd = r.getRowDesc();
-        if(newrd != rd){
+        if(!newrd.equals(rd)){
             throw new DbException("RowDesc is mismatch");
         }
         int freeSlotNum = -1;
