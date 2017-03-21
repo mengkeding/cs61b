@@ -1,6 +1,7 @@
 package db;
 
 import java.io.*;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Random;
 
@@ -167,7 +168,11 @@ public class BufferPool {
      *
      * Marks any pages that were dirtied by the operation as dirty by calling
      * their markDirty bit, and updates cached versions of any pages that have 
-     * been dirtied so that future requests see up-to-date pages. 
+     * been dirtied so that future requests see up-to-date pages.
+     * 通过调用pages的markDirty把所有被运算dirtied的pages标记为dirty，并且把那些被dirtied了的
+     * pages的缓存版本更新，这样未来的请求就可以看到及时更新过的pages.
+     *
+     * 这些方法应该调用正在被修改的table所属的HeapFile里适当的方法。
      *
      * @param tid the transaction adding the Row
      * @param tableId the table to add the Row to
@@ -177,6 +182,15 @@ public class BufferPool {
             throws DbException, IOException, TransactionAbortedException {
         // some code goes here
         // not necessary for proj1
+        HeapFile hpFile = (HeapFile) Database.getCatalog().getDbFile(tableId);
+        ArrayList<Page> pageList = hpFile.insertRow(tid,r);
+        for(Page page: pageList){
+            page.markDirty(true,tid);
+            pageMap.put(page.getId(),page);
+        }
+
+
+
     }
 
     /**
@@ -196,6 +210,11 @@ public class BufferPool {
             throws DbException, TransactionAbortedException {
         // some code goes here
         // not necessary for proj1
+        HeapPageId pid = (HeapPageId) r.getRowId().getPageId();
+        int tableId = pid.getTableId();
+        HeapFile hpFile = (HeapFile) Database.getCatalog().getDbFile(tableId);
+        Page page = hpFile.deleteRow(tid,r);
+        page.markDirty(true,tid);
     }
 
     /**
