@@ -1,9 +1,7 @@
 package db;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStreamReader;
+import java.io.*;
+import java.util.ArrayList;
 import java.util.StringJoiner;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -62,59 +60,63 @@ public class Database {
 
 
     //create table <table name> (<column0 name> <type0>, <column1 name> <type1>, ...)
-    public void create(){
+    public void create(String name, String[] ){
 
     }
 
+    private void convert(String tablename){
+        try {
+            File sourceTblFile=new File(tablename + ".tbl");
+            File targetDatFile=new File(tablename + ".tbl".replaceAll(".tbl", ".dat"));
 
+            BufferedReader br = new BufferedReader(new FileReader(sourceTblFile));
+            String firstline = br.readLine();
+
+            //eg: columnNameType = {TeamName string, City string, Sport string, Year int}
+            //but i want to get type = {string, string, string, int}
+            //and names = {TeamName, City, Sport,Year}
+
+            String[] columnNameType = firstline.split(",");
+            int numOfAttributes = columnNameType.length;
+            String[] names = new String[numOfAttributes];
+            String[] types = new String[numOfAttributes];
+            for(int i = 0; i < numOfAttributes; i++){
+                names[i] = columnNameType[i].split(" ")[0];
+                types[i] = columnNameType[i].split(" ")[1];
+            }
+            Type[] ts = new Type[numOfAttributes];
+            char fieldSeparator=',';
+            int index=0;
+            for (String type: types) {
+                if (type.toLowerCase().equals("int"))
+                    ts[index++]=Type.INT;
+                else if (type.toLowerCase().equals("string"))
+                    ts[index++]=Type.STRING;
+                else {
+                    System.err.println("Unknown type " + type);
+                    return;
+                }
+            }
+            HeapFileEncoder.convert(sourceTblFile,targetDatFile,
+                    BufferPool.PAGE_SIZE,numOfAttributes,ts,fieldSeparator);
+
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+
+    public void load(String name) throws IOException, RuntimeException {
+
+        FileReader tbl = new FileReader(name + ".tbl");
+        BufferedReader in = new BufferedReader(tbl);
+    }
 
     //print <table name>
     public void print(String tablename){
         if(hasThisTable(tablename)){
-
             //convert the tablename.tbl file to tablename.dat file.
-                try {
-                    File sourceTblFile=new File("tablename.tbl");
-                    File targetDatFile=new File("tablename.tbl".replaceAll(".tbl", ".dat"));
-                    //读取.tbl文件的第一行，计算逗号的数目，得到的数字加1是Number of Columns.
-
-                    int numOfAttributes=Integer.parseInt(args[2]);
-                    Type[] ts = new Type[numOfAttributes];
-                    char fieldSeparator=',';
-
-                    if (args.length == 3)
-                        for (int i=0;i<numOfAttributes;i++)
-                            ts[i]=Type.INT;
-                    else {
-                        String typeString=args[3];
-                        String[] typeStringAr = typeString.split(",");
-                        if (typeStringAr.length!=numOfAttributes)
-                        {
-                            System.err.println("The number of types does not agree with the number of columns");
-                            return;
-                        }
-                        int index=0;
-                        for (String s: typeStringAr) {
-                            if (s.toLowerCase().equals("int"))
-                                ts[index++]=Type.INT;
-                            else if (s.toLowerCase().equals("string"))
-                                ts[index++]=Type.STRING;
-                            else {
-                                System.err.println("Unknown type " + s);
-                                return;
-                            }
-                        }
-//                        if (args.length==5)
-//                            fieldSeparator=args[4].charAt(0);
-                    }
-
-                    HeapFileEncoder.convert(sourceTblFile,targetDatFile,
-                            BufferPool.PAGE_SIZE,numOfAttributes,ts,fieldSeparator);
-
-                } catch (IOException e) {
-                    throw new RuntimeException(e);
-                }
-
+            convert(tablename);
             //print the tablename.dat file.
             //在之前的基础上添加一行RowDesc的内容：Colname, Coltype.
             File tableFile = new File("tablename.dat");
@@ -166,7 +168,7 @@ public class Database {
             INSERT_CLS  = Pattern.compile("(\\S+)\\s+values\\s+(.+?" +
                     "\\s*(?:,\\s*.+?\\s*)*)");
 
-    private static void eval(String query) {
+    private void eval(String query) {
         Matcher m;
         if ((m = CREATE_CMD.matcher(query)).matches()) {
             createTable(m.group(1));
@@ -213,9 +215,20 @@ public class Database {
                 " '%s' from the join of these tables: '%s', filtered by these conditions: '%s'\n", name, exprs, tables, conds);
     }
 
-    private static void loadTable(String name) {
-        System.out.printf("You are trying to load the table named %s\n", name);
+    private void loadTable(String name) {
+        //System.out.printf("You are trying to load the table named %s\n", name);
+        try {
+            load(name);
+        } catch (RuntimeException re) {
+            outPut = "ERROR: .*";
+            re.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+            outPut = "ERROR: .*";
+        }
+
     }
+
 
     private static void storeTable(String name) {
         System.out.printf("You are trying to store the table named %s\n", name);
