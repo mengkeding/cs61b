@@ -22,6 +22,8 @@ public class Database {
     private final static String LOGFILENAME = "log";
     private LogFile _logfile;
     private String outPut = "";
+    private String [] names;
+    private Type [] ts;
 
     public Database() {
         _catalog = new Catalog();
@@ -60,11 +62,11 @@ public class Database {
 
 
     //create table <table name> (<column0 name> <type0>, <column1 name> <type1>, ...)
-    public void create(String name, String[] ){
+//    public void create(String name, String[] ){
+//
+//    }
 
-    }
-
-    private void convert(String tablename){
+    public void convert(String tablename){
         try {
             File sourceTblFile=new File(tablename + ".tbl");
             File targetDatFile=new File(tablename + ".tbl".replaceAll(".tbl", ".dat"));
@@ -72,19 +74,15 @@ public class Database {
             BufferedReader br = new BufferedReader(new FileReader(sourceTblFile));
             String firstline = br.readLine();
 
-            //eg: columnNameType = {TeamName string, City string, Sport string, Year int}
-            //but i want to get type = {string, string, string, int}
-            //and names = {TeamName, City, Sport,Year}
-
             String[] columnNameType = firstline.split(",");
             int numOfAttributes = columnNameType.length;
-            String[] names = new String[numOfAttributes];
+            names = new String[numOfAttributes];
             String[] types = new String[numOfAttributes];
             for(int i = 0; i < numOfAttributes; i++){
                 names[i] = columnNameType[i].split(" ")[0];
                 types[i] = columnNameType[i].split(" ")[1];
             }
-            Type[] ts = new Type[numOfAttributes];
+            ts = new Type[numOfAttributes];
             char fieldSeparator=',';
             int index=0;
             for (String type: types) {
@@ -105,22 +103,40 @@ public class Database {
         }
     }
 
+//    // construct a 3-column table schema
+//    Type types[] = new Type[]{ Type.INT_TYPE, Type.INT_TYPE, Type.INT_TYPE };
+//    String names[] = new String[]{ "field0", "field1", "field2" };
+//
+//    TupleDesc td = new TupleDesc(types, names);
+//
+//    // create the tables, associate them with the data files
+//    // and tell the catalog about the schema  the tables.
+//    HeapFile table1 = new HeapFile(new File("some_data_file1.dat"), td);
+//        Database.getCatalog().addTable(table1, "t1");
+//
+//    HeapFile table2 = new HeapFile(new File("some_data_file2.dat"), td);
+//        Database.getCatalog().addTable(table2, "t2");
+
+
+
 
     public void load(String name) throws IOException, RuntimeException {
+            convert(name);
+            FileReader tbl = new FileReader(name + ".dat");
+            BufferedReader in = new BufferedReader(tbl);
+            RowDesc rd = new RowDesc(ts,names);
+            HeapFile table = new HeapFile(new File(name + ".dat"),rd);
+            Database.getCatalog().addTable(table,name);
+        }
 
-        FileReader tbl = new FileReader(name + ".tbl");
-        BufferedReader in = new BufferedReader(tbl);
-    }
 
     //print <table name>
     public void print(String tablename){
         if(hasThisTable(tablename)){
-            //convert the tablename.tbl file to tablename.dat file.
-            convert(tablename);
-            //print the tablename.dat file.
-            //在之前的基础上添加一行RowDesc的内容：Colname, Coltype.
-            File tableFile = new File("tablename.dat");
-            int columns = Integer.parseInt(columnNums);
+
+
+            File tableFile = new File(tablename + ".dat");
+            int columns = names.length;
             DbFile table = Utility.openHeapFile(columns, tableFile);
             TransactionId tid = new TransactionId();
             DbFileIterator it = table.iterator(tid);
@@ -248,8 +264,8 @@ public class Database {
         System.out.printf("You are trying to insert the row \"%s\" into the table %s\n", m.group(2), m.group(1));
     }
 
-    private static void printTable(String name) {
-        System.out.printf("You are trying to print the table named %s\n", name);
+    private void printTable(String name) {
+        //System.out.printf("You are trying to print the table named %s\n", name);
         print(name);
     }
 
