@@ -97,18 +97,19 @@ public class HeapFileEncoder {
                                int numFields, Type[] typeAr, char fieldSeparator)
             throws IOException {
 
-        int nrecbytes = 0;
+        int nrowbytes = 0;                           //the number in bytes of a row
         for (int i = 0; i < numFields ; i++) {
-            nrecbytes += typeAr[i].getLen();
+            nrowbytes += typeAr[i].getLen();
         }
-        int nrecords = (npagebytes * 8) /  (nrecbytes * 8 + 1);  //floor comes for free
+        int nrows = (npagebytes * 8) /  (nrowbytes * 8 + 1);      //floor comes for free, number of rows
 
-        //  per record, we need one bit; there are n records per page, so we need
-        // n records bits, i.e., ((n records/32)+1) integers.
-        int nheaderbytes = (nrecords / 8);
-        if (nheaderbytes * 8 < nrecords)
+        //  per row, we need one bit; there are n rows per page, so we need
+        // n rows bits, i.e., ((n rows/32)+1) integers.
+        int nheaderbytes = (nrows / 8);      //number of bytes for header
+        if (nheaderbytes * 8 < nrows) {
             nheaderbytes++;  //ceiling
-        int nheaderbits = nheaderbytes * 8;
+        }
+        int nheaderbits = nheaderbytes * 8;      //number of bits for header
 
         BufferedReader br = new BufferedReader(new FileReader(inFile));
         FileOutputStream os = new FileOutputStream(outFile);
@@ -116,8 +117,8 @@ public class HeapFileEncoder {
         // our numbers probably won't be much larger than 1024 digits
         char buf[] = new char[1024];
 
-        int curpos = 0;
-        int recordcount = 0;
+        int curpos = 0;       //current position
+        int rowcount = 0;
         int npages = 0;
         int fieldNo = 0;
 
@@ -128,21 +129,37 @@ public class HeapFileEncoder {
 
         boolean done = false;
         boolean first = true;
+
+        String firstLine = br.readLine();
+        ByteArrayOutputStream firstLineBAOS = new ByteArrayOutputStream();
+        DataOutputStream firstLineStream = new DataOutputStream(firstLineBAOS);
+        firstLineStream.writeBytes(firstLine);
+        first = false;
+
+
+
+
         while (!done) {
             int c = br.read();
-
             // Ignore Windows/Notepad special line endings
-            if (c == '\r')
+            if (c == '\r'){
                 continue;
-
+            }
             if (c == '\n') {
-                if (first)
+                if (first){
                     continue;
-                recordcount++;
+                }
+                rowcount++;
                 first = true;
-            } else
-                first = false;
+            }
+            else {
+               first = false;
+            }
+
+
             if (c == fieldSeparator || c == '\n' || c == '\r') {
+
+                //copy from char[] buf to String s, starting at index 0 til curpos numbers of elements.
                 String s = new String(buf, 0, curpos);
                 if (typeAr[fieldNo] == Type.INT) {
                     try {
@@ -151,23 +168,26 @@ public class HeapFileEncoder {
                         System.out.println ("BAD LINE : " + s);
                     }
                 }
-                else   if (typeAr[fieldNo] == Type.STRING) {
+                else if (typeAr[fieldNo] == Type.STRING) {
                     s = s.trim();
                     int overflow = Type.STRING_LEN - s.length();
                     if (overflow < 0) {
                         String news = s.substring(0,Type.STRING_LEN);
                         s  = news;
                     }
+
                     pageStream.writeInt(s.length());
                     pageStream.writeBytes(s);
                     while (overflow-- > 0)
                         pageStream.write((byte)0);
                 }
                 curpos = 0;
-                if (c == '\n')
+                if (c == '\n') {
                     fieldNo = 0;
-                else
+                }
+                else{
                     fieldNo++;
+                }
 
             } else if (c == -1) {
                 done = true;
@@ -186,14 +206,14 @@ public class HeapFileEncoder {
             // when we're done, also flush the page to disk, but only if it has
             // rows on it.  however, if this file is empty, do flush an empty
             // page to disk.
-            if (recordcount >= nrecords
-                    || done && recordcount > 0
+            if (rowcount >= nrows
+                    || done && rowcount > 0
                     || done && npages == 0) {
                 int i = 0;
                 byte headerbyte = 0;
 
                 for (i=0; i<nheaderbits; i++) {
-                    if (i < recordcount)
+                    if (i < rowcount)
                         headerbyte |= (1 << (i % 8));
 
                     if (((i+1) % 8) == 0) {
@@ -207,23 +227,28 @@ public class HeapFileEncoder {
 
                 // pad the rest of the page with zeroes
 
-                for (i=0; i<(npagebytes - (recordcount * nrecbytes + nheaderbytes)); i++)
+                for (i=0; i<(npagebytes - (rowcount * nrowbytes + nheaderbytes)); i++) {
                     pageStream.writeByte(0);
 
-                // write header and body to file
-                headerStream.flush();
-                headerBAOS.writeTo(os);
-                pageStream.flush();
-                pageBAOS.writeTo(os);
+                    // write header and body to file
+                    firstLineStream.flush();
+                    firstLineBAOS.writeTo(os);
+                    headerStream.flush();
+                    headerBAOS.writeTo(os);   //write the contents of headerBAOS to os.
+                    pageStream.flush();
+                    pageBAOS.writeTo(os);
 
-                // reset header and body for next page
-                headerBAOS = new ByteArrayOutputStream(nheaderbytes);
-                headerStream = new DataOutputStream(headerBAOS);
-                pageBAOS = new ByteArrayOutputStream(npagebytes);
-                pageStream = new DataOutputStream(pageBAOS);
+                    // reset header and body for next page
+                    firstLineBAOS = new ByteArrayOutputStream();
+                    firstLineStream = new DataOutputStream(firstLineBAOS);
+                    headerBAOS = new ByteArrayOutputStream(nheaderbytes);
+                    headerStream = new DataOutputStream(headerBAOS);
+                    pageBAOS = new ByteArrayOutputStream(npagebytes);
+                    pageStream = new DataOutputStream(pageBAOS);
 
-                recordcount = 0;
-                npages++;
+                    rowcount = 0;
+                    npages++;
+                }
             }
         }
         br.close();
