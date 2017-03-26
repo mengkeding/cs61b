@@ -6,6 +6,7 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.ArrayList;
 
 /**
  * Created by Administrator on 2017/3/23 0023.
@@ -35,14 +36,14 @@ public class convertTest {
             char fieldSeparator=',';
             int index=0;
             for (String type: types) {
-                if (type.toLowerCase().equals("int"))
-                    ts[index++]=Type.INT;
-                else if (type.toLowerCase().equals("string"))
+//                if (type.toLowerCase().equals("int"))
+//                    ts[index++]=Type.INT;
+//                else if (type.toLowerCase().equals("string"))
                     ts[index++]=Type.STRING;
-                else {
-                    System.err.println("Unknown type " + type);
-                    return;
-                }
+//                else {
+//                    System.err.println("Unknown type " + type);
+//                    return;
+//                }
             }
             HeapFileEncoder.convert(sourceTblFile,targetDatFile,
                     BufferPool.PAGE_SIZE,numOfAttributes,ts,fieldSeparator);
@@ -53,10 +54,30 @@ public class convertTest {
     }
 
 
+    public static void load(String tablename){
+        try{
+            FileReader tbl = new FileReader(tablename + ".dat");
+            BufferedReader in = new BufferedReader(tbl);
+            RowDesc rd = new RowDesc(ts,names);
+            HeapFile table = new HeapFile(new File(tablename + ".dat"),rd);
+            Database.getCatalog().addTable(table,tablename);
+            //还要把这个HeapFile里的所有pages加到BufferPool里面去
+            //Database.getBufferPool().pageMap.put(PageId key, Page value);
+
+
+
+        }catch (IOException e){
+            e.printStackTrace();
+        }
+
+    }
+
     public static void print(String tablename){
         File tableFile = new File(tablename + ".dat");
         int columns = names.length;
-        DbFile table = Utility.openHeapFile(columns, tableFile);
+//        DbFile table = Utility.openHeapFile(columns, tableFile);
+        RowDesc rd = new RowDesc(ts,names);
+        HeapFile table = new HeapFile(tableFile,rd);
         TransactionId tid = new TransactionId();
         DbFileIterator it = table.iterator(tid);
         SeqScan f = new SeqScan(tid, table.getId());
@@ -85,6 +106,7 @@ public class convertTest {
 
     public static void main(String[] args) {
         convert("t2");
+        load("t2");
         print("t2");
     }
 }
