@@ -110,18 +110,18 @@ import java.io.Serializable;
                     sb.append(columns[i]);
                     sb.append(",");
                 }else if(columns[i].getType() == Type.STRING){
-                    sb.append("'");
+                   // sb.append("'");
                     sb.append(columns[i]);
-                    sb.append("'");
+                   // sb.append("'");
                     sb.append(",");
                 }
             }
             if(columns[columns.length - 1].getType() == Type.INT){
                 sb.append(columns[columns.length - 1]);
             }else if(columns[columns.length - 1].getType() == Type.STRING){
-                sb.append("'");
+                //sb.append("'");
                 sb.append(columns[columns.length - 1]);
-                sb.append("'");
+                //sb.append("'");
             }
          return  sb.toString();
         }

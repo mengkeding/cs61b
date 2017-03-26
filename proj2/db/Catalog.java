@@ -38,8 +38,8 @@ import java.util.*;
 public class Catalog {
 
 
-    private HashMap<String,Table> nameHash;
-    private HashMap<Integer,Table> idHash;
+    public HashMap<String,Table> nameHash;
+    public HashMap<Integer,Table> idHash;
 
 
 
