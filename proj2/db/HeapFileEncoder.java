@@ -127,14 +127,34 @@ public class HeapFileEncoder {
         ByteArrayOutputStream pageBAOS = new ByteArrayOutputStream(npagebytes);
         DataOutputStream pageStream = new DataOutputStream(pageBAOS);
 
+
         boolean done = false;
-        boolean first = true;
+        boolean first = true;                  //the first character in one line, not the first line in a file
 
         String firstLine = br.readLine();
-        ByteArrayOutputStream firstLineBAOS = new ByteArrayOutputStream();
-        DataOutputStream firstLineStream = new DataOutputStream(firstLineBAOS);
-        firstLineStream.writeBytes(firstLine);
-        first = false;
+        rowcount++;
+        String [] chars = firstLine.split(",");
+        for(int i = 0; i < chars.length; i++){
+            chars[i]= chars[i].trim();
+            int overFlowFirstLine = Type.STRING_LEN - chars[i].length();
+            if (overFlowFirstLine < 0) {
+                String news = chars[i].substring(0,Type.STRING_LEN);
+                chars[i]  = news;
+            }
+            pageStream.writeInt(chars[i].length());
+            pageStream.writeBytes(chars[i]);
+            //pageStream.writeInt('\n');
+            while (overFlowFirstLine-- > 0) {
+                pageStream.write((byte) 0);
+            }
+        }
+
+
+
+
+
+
+
 
 
 
@@ -156,7 +176,6 @@ public class HeapFileEncoder {
                first = false;
             }
 
-
             if (c == fieldSeparator || c == '\n' || c == '\r') {
 
                 //copy from char[] buf to String s, starting at index 0 til curpos numbers of elements.
@@ -167,7 +186,9 @@ public class HeapFileEncoder {
                     } catch (NumberFormatException e) {
                         System.out.println ("BAD LINE : " + s);
                     }
+
                 }
+
                 else if (typeAr[fieldNo] == Type.STRING) {
                     s = s.trim();
                     int overflow = Type.STRING_LEN - s.length();
@@ -229,27 +250,26 @@ public class HeapFileEncoder {
 
                 for (i=0; i<(npagebytes - (rowcount * nrowbytes + nheaderbytes)); i++) {
                     pageStream.writeByte(0);
-
-                    // write header and body to file
-                    firstLineStream.flush();
-                    firstLineBAOS.writeTo(os);
-                    headerStream.flush();
-                    headerBAOS.writeTo(os);   //write the contents of headerBAOS to os.
-                    pageStream.flush();
-                    pageBAOS.writeTo(os);
-
-                    // reset header and body for next page
-                    firstLineBAOS = new ByteArrayOutputStream();
-                    firstLineStream = new DataOutputStream(firstLineBAOS);
-                    headerBAOS = new ByteArrayOutputStream(nheaderbytes);
-                    headerStream = new DataOutputStream(headerBAOS);
-                    pageBAOS = new ByteArrayOutputStream(npagebytes);
-                    pageStream = new DataOutputStream(pageBAOS);
-
-                    rowcount = 0;
-                    npages++;
                 }
+
+                // write header and body to file
+
+                headerStream.flush();
+                headerBAOS.writeTo(os);   //write the contents of headerBAOS to os.
+                pageStream.flush();
+                pageBAOS.writeTo(os);
+
+                // reset header and body for next page
+
+                headerBAOS = new ByteArrayOutputStream(nheaderbytes);
+                headerStream = new DataOutputStream(headerBAOS);
+                pageBAOS = new ByteArrayOutputStream(npagebytes);
+                pageStream = new DataOutputStream(pageBAOS);
+
+                rowcount = 0;
+                npages++;
             }
+
         }
         br.close();
         os.close();
