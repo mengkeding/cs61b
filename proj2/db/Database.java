@@ -86,14 +86,7 @@ public class Database {
             char fieldSeparator=',';
             int index=0;
             for (String type: types) {
-                if (type.toLowerCase().equals("int"))
-                    ts[index++]=Type.INT;
-                else if (type.toLowerCase().equals("string"))
-                    ts[index++]=Type.STRING;
-                else {
-                    System.err.println("Unknown type " + type);
-                    return;
-                }
+                ts[index++]=Type.STRING;
             }
             HeapFileEncoder.convert(sourceTblFile,targetDatFile,
                     BufferPool.PAGE_SIZE,numOfAttributes,ts,fieldSeparator);
@@ -102,7 +95,6 @@ public class Database {
             throw new RuntimeException(e);
         }
     }
-
 //    // construct a 3-column table schema
 //    Type types[] = new Type[]{ Type.INT_TYPE, Type.INT_TYPE, Type.INT_TYPE };
 //    String names[] = new String[]{ "field0", "field1", "field2" };
@@ -133,13 +125,13 @@ public class Database {
     //print <table name>
     public void print(String tablename){
         if(hasThisTable(tablename)){
-
-
             File tableFile = new File(tablename + ".dat");
             int columns = names.length;
-            DbFile table = Utility.openHeapFile(columns, tableFile);
+            RowDesc rd = new RowDesc(ts,names);
+            HeapFile table = new HeapFile(tableFile,rd);
             TransactionId tid = new TransactionId();
             DbFileIterator it = table.iterator(tid);
+            SeqScan f = new SeqScan(tid, table.getId());
             if(null == it){
                 System.out.println("Error: method HeapFile.iterator(TransactionId tid) not yet implemented!");
             } else {
@@ -149,15 +141,22 @@ public class Database {
                         Row t = it.next();
                         System.out.println(t);
                     }
+                    it.close();
+                    Database.getBufferPool().transactionComplete(tid);
                 }catch(DbException dbe){
                     dbe.printStackTrace();
                 }catch(TransactionAbortedException tae){
                     tae.printStackTrace();
+                }catch (IOException ioe){
+                    ioe.printStackTrace();
                 }
-                it.close();
+
             }
         }
     }
+
+
+
 
     private static final String REST  = "\\s*(.*)\\s*",
             COMMA = "\\s*,\\s*",
