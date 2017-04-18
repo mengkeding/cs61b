@@ -27,7 +27,7 @@ public class InsertRandomSpeedTest {
         String repeat = "y";
         do {
             System.out.print("\nEnter # strings to insert into ULLMap: ");
-            timeRandomMap61B(new ULLMap<String, Integer>(), 
+            timeRandomMap61B(new lab8.ULLMap<String, Integer>(),
                             waitForPositiveInt(input), L);
 
             System.out.print("\nEnter # strings to insert into your BSTMap: ");
