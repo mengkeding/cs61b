@@ -1,5 +1,8 @@
 // TODO: Make sure to make this class a part of the synthesizer package
 package synthesizer;
+
+import java.util.Iterator;
+
 //TODO: Make sure to make this class and all of its methods public
 //TODO: Make sure to make this class extend AbstractBoundedQueue<t>
 public class ArrayRingBuffer extends AbstractBoundedQueue{
@@ -78,5 +81,32 @@ public class ArrayRingBuffer extends AbstractBoundedQueue{
         return rb[first];
     }
 
-    // TODO: When you get to part 5, implement the needed code to support iteration.
+
+
+        // TODO: When you get to part 5, implement the needed code to support iteration.
+
+    public class doubleIterator implements Iterator{
+        private int index ;
+
+        @Override
+        public boolean hasNext() {
+            return index != rb.length - 1;
+        }
+
+        @Override
+        public Double next() {
+            double returnDouble = rb[index];
+            index += 1;
+            return returnDouble;
+        }
+    }
+    @Override
+    public Iterator iterator() {
+        return new doubleIterator();
+    }
+
+
+
+
+
 }
