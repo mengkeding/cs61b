@@ -9,33 +9,41 @@ import java.util.Set;
 public class BSTMap<K extends Comparable<K>, V> implements Map61B<K, V>{
 
 
+
     private Node root;
+
     private class Node{
         private K key;
         private V value;
         private Node left, right;
-        private int size;
+        private int N;
 
-        public Node(K key, V value, int size){
+        public Node(K key, V value, int N){
             this.key = key;
             this.value = value;
-            this.size = size;
+            this.N = N;
+            this.left = null;
+            this.right = null;
         }
     }
 
     @Override
     public void clear() {
-        root.size = 0;
+
+        root = null;
     }
 
     @Override
     public boolean containsKey(K key) {
-        return false;
+        if(key == null){
+            throw new IllegalArgumentException("argument to contains() is null");
+        }
+        return get(key) != null;
     }
 
     @Override
     public V get(K key) {
-        get(root,key);
+        return get(root,key);
     }
 
     private V get(Node x, K key){
@@ -67,14 +75,14 @@ public class BSTMap<K extends Comparable<K>, V> implements Map61B<K, V>{
         if(x == null){
             return 0;
         }else {
-            return x.size;
+            return x.N;
         }
     }
 
 
     @Override
     public void put(K key, V value) {
-        put(root,key,value);
+        root = put(root,key,value);
     }
 
 
@@ -90,11 +98,13 @@ public class BSTMap<K extends Comparable<K>, V> implements Map61B<K, V>{
         }else{
             x.value = value;
         }
-        x.size = x.left.size + x.right.size + 1;
+        x.N = size(x.left) + size(x.right) + 1;
         return x;
     }
 
+    public void printInOrder(){
 
+    }
 
 
     @Override

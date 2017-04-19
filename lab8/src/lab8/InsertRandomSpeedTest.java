@@ -11,16 +11,16 @@ import edu.princeton.cs.algs4.Stopwatch;
 public class InsertRandomSpeedTest {
     /*
         Requests user input and performs tests of three different set
-        implementations. ARGS is unused. 
+        implementations. ARGS is unused.
     */
     public static void main(String[] args) throws IOException {
         int N;
         Scanner input = new Scanner(System.in);
 
         System.out.println("\n This program inserts random "
-                           + "Strings of length L\n"
-                           + " Into different types of maps "
-                           + "as <String, Integer> pairs.\n");
+                + "Strings of length L\n"
+                + " Into different types of maps "
+                + "as <String, Integer> pairs.\n");
         System.out.print("What would you like L to be?: ");
         int L = waitForPositiveInt(input);
 
@@ -28,15 +28,15 @@ public class InsertRandomSpeedTest {
         do {
             System.out.print("\nEnter # strings to insert into ULLMap: ");
             timeRandomMap61B(new lab8.ULLMap<String, Integer>(),
-                            waitForPositiveInt(input), L);
+                    waitForPositiveInt(input), L);
 
             System.out.print("\nEnter # strings to insert into your BSTMap: ");
-            timeRandomMap61B(new BSTMap<String, Integer>(), 
-                            waitForPositiveInt(input), L);
+            timeRandomMap61B(new BSTMap<String, Integer>(),
+                    waitForPositiveInt(input), L);
 
             System.out.print("\nEnter # strings to insert into Java's TreeMap: ");
-            timeRandomTreeMap(new TreeMap<String, Integer>(), 
-                            waitForPositiveInt(input), L);
+            timeRandomTreeMap(new TreeMap<String, Integer>(),
+                    waitForPositiveInt(input), L);
 
             System.out.print("\nWould you like to try more timed-tests? (y/n)");
             repeat = input.nextLine();
@@ -45,7 +45,7 @@ public class InsertRandomSpeedTest {
     }
 
     /** Returns time needed to put N random strings of length L into the
-      * Map61B 61bMap. */
+     * Map61B 61bMap. */
     public static double insertRandom(Map61B<String, Integer> map61B, int N, int L) {
         Stopwatch sw = new Stopwatch();
         String s = "cat";
@@ -57,7 +57,7 @@ public class InsertRandomSpeedTest {
     }
 
     /** Returns time needed to put N random strings of length L into the
-      * TreeMap treeMap. */
+     * TreeMap treeMap. */
     public static double insertRandom(TreeMap<String, Integer> treeMap, int N, int L) {
         Stopwatch sw = new Stopwatch();
         String s = "cat";
@@ -77,10 +77,10 @@ public class InsertRandomSpeedTest {
         try {
             double mapTime = insertRandom(map, N, L);
             System.out.printf(map.getClass() + ": %.2f sec\n", mapTime);
-        } catch (StackOverflowError e) { 
-            printInfoOnStackOverflow(N, L); 
-        } catch (RuntimeException e) { 
-            e.printStackTrace(); 
+        } catch (StackOverflowError e) {
+            printInfoOnStackOverflow(N, L);
+        } catch (RuntimeException e) {
+            e.printStackTrace();
         }
     }
 
@@ -93,10 +93,10 @@ public class InsertRandomSpeedTest {
         try {
             double javaTime = insertRandom(treeMap, N, L);
             System.out.printf("Java's Built-in TreeMap: %.2f sec\n", javaTime);
-        } catch (StackOverflowError e) { 
-            printInfoOnStackOverflow(N, L); 
-        } catch (RuntimeException e) { 
-            e.printStackTrace(); 
+        } catch (StackOverflowError e) {
+            printInfoOnStackOverflow(N, L);
+        } catch (RuntimeException e) {
+            e.printStackTrace();
         }
     }
 
@@ -123,8 +123,8 @@ public class InsertRandomSpeedTest {
         Prints the error with corresponding N and L
     */
     private static void printInfoOnStackOverflow(int N, int L) {
-        System.out.println("--Stack Overflow -- couldn't add " + N 
-                            + " strings of length " + L + ".");
+        System.out.println("--Stack Overflow -- couldn't add " + N
+                + " strings of length " + L + ".");
     }
 
     /* Prints a nice message for the user on bad input */

@@ -27,18 +27,18 @@ public class StringUtils {
     }
 
     /** Returns true if string S consists of characters between
-      * 'a' and 'z' only. No spaces, numbers, upper-case, or any other
-      * characters are allowed.
-      */
+     * 'a' and 'z' only. No spaces, numbers, upper-case, or any other
+     * characters are allowed.
+     */
     public static boolean isLowerCase(String s) {
         return Pattern.matches("[a-z]*", s);
     }
 
     /** Returns the string that comes right after S in alphabetical order.
-      * For example, if s is 'potato', this method will return 'potatp'. If
-      * the last character is a z, then we add to the next position, and so
-      * on.
-      */
+     * For example, if s is 'potato', this method will return 'potatp'. If
+     * the last character is a z, then we add to the next position, and so
+     * on.
+     */
     public static String nextString(String s) {
         /* Handle all zs as a special case to keep helper method simple. */
         if (isAllzs(s)) {
@@ -50,11 +50,11 @@ public class StringUtils {
     }
 
     /** Helper function for nextString. Increments the Pth position of X
-      * by one, wrapping around to 'a' if p == 'z'. If wraparound occurs,
-      * then we need to carry the one, and we increment position P - 1.
-      *
-      * Will fail for a character array containing only zs.
-      */
+     * by one, wrapping around to 'a' if p == 'z'. If wraparound occurs,
+     * then we need to carry the one, and we increment position P - 1.
+     *
+     * Will fail for a character array containing only zs.
+     */
     private static void incrementCharArray(char [] x, int p) {
         if (x[p] != 'z') {
             x[p] += 1;

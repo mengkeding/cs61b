@@ -9,6 +9,45 @@ import java.util.Set;
 public class ULLMap<K, V>  implements Map61B<K, V> {
     int size = 0;
 
+
+    /** Keys and values are stored in a linked list of Entry objects.
+     *  This variable stores the first pair in this linked list. */
+    private Entry list;
+
+    /** Represents one node in the linked list that stores the key-value pairs
+     *  in the dictionary. */
+    private class Entry {
+
+        /** Stores the key of the key-value pair of this node in the list. */
+        K key;
+        /** Stores the value of the key-value pair of this node in the list. */
+        V val;
+        /** Stores the next Entry in the linked list. */
+        Entry next;
+
+
+        /** Stores KEY as the key in this key-value pair, VAL as the value, and
+         *  NEXT as the next node in the linked list. */
+        Entry(K k, V v, Entry n) {
+            key = k;
+            val = v;
+            next = n;
+        }
+
+        /** Returns the Entry in this linked list of key-value pairs whose key
+         *  is equal to KEY, or null if no such Entry exists. */
+        Entry get(K k) {
+            if (k != null && k.equals(key)) {
+                return this;
+            }
+            if (next == null) {
+                return null;
+            }
+            return next.get(key);
+        }
+
+    }
+
     /** Returns the value corresponding to KEY or null if no such value exists. */
     public V get(K key) {
         if (list == null) {
@@ -63,42 +102,7 @@ public class ULLMap<K, V>  implements Map61B<K, V> {
         return new ULLMapIter();
     }
 
-    /** Keys and values are stored in a linked list of Entry objects.
-     *  This variable stores the first pair in this linked list. */
-    private Entry list;
 
-    /** Represents one node in the linked list that stores the key-value pairs
-     *  in the dictionary. */
-    private class Entry {
-        
-        /** Stores KEY as the key in this key-value pair, VAL as the value, and
-         *  NEXT as the next node in the linked list. */
-        Entry(K k, V v, Entry n) {
-            key = k;
-            val = v;
-            next = n;
-        }
-
-        /** Returns the Entry in this linked list of key-value pairs whose key
-         *  is equal to KEY, or null if no such Entry exists. */
-        Entry get(K k) {
-            if (k != null && k.equals(key)) {
-                return this;
-            }
-            if (next == null) {
-                return null;
-            }
-            return next.get(key);
-        }
-
-        /** Stores the key of the key-value pair of this node in the list. */
-        K key;
-        /** Stores the value of the key-value pair of this node in the list. */
-        V val;
-        /** Stores the next Entry in the linked list. */
-        Entry next;
-        
-    }
 
     /** An iterator that iterates over the keys of the dictionary. */
     private class ULLMapIter implements Iterator<K> {
@@ -113,7 +117,7 @@ public class ULLMap<K, V>  implements Map61B<K, V> {
         public boolean hasNext() {
             return cur != null;
         }
-       
+
         @Override
         public K next() {
             K ret = cur.key;
@@ -124,7 +128,7 @@ public class ULLMap<K, V>  implements Map61B<K, V> {
 
         /** Stores the current key-value pair. */
         private Entry cur;
-    
+
     }
 
     @Override
